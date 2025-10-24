@@ -39,49 +39,48 @@ router.use(session({
 
  const upload = multer({ storage });
 
-
+    
 router.post('/login', async (req,res) => {
-
-
-    console.log(req.body)
    
-    // const {email, password} = decode(req.body)
-   
-    // try {
-
-    //     if(!email || !password) {
-    //          res.status(200).json({message:'required username and password'})
-    //     }
-
-
-
-    //     let sql = `SELECT * FROM users WHERE email = ?`
-    //     let result = await db.executeQuery(sql,[email])
        
-    //     if(!result[0]) {
-    //          res.status(401).json({message:'No account associate on this email'})
-    //          return
-    //     }
+    const {email, password} = decode(req.body.parsed)
+
+    try {
+
+        if(!email || !password) {
+             res.status(200).json({message:'required username and password'})
+        }
 
 
-    //      bcryptjs.compare(password, result[0].password , (err,success) => {
 
-    //         if(err) {
-    //             res.status(401).json({message : 'Password does not match'})
+        let sql = `SELECT * FROM users WHERE email = ?`
+        let result = await db.executeQuery(sql,[email])
+       
+        if(!result[0]) {
+             res.status(401).json({message:'No account associate on this email'})
+             return
+        }
 
-    //         }
+
+         bcryptjs.compare(password, result[0].password , (err,success) => {
+
+            if(err) {
+                res.status(401).json({message : 'Password does not match'})
+
+            }
 
 
-    //         let {password, ...user } = result[0]
-    //         const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY, {expiresIn:'2hrs'})
-    //         res.status(201).json(encode({user,token}))
-    //      })
+            let {password, ...user } = result[0]
+            const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY, {expiresIn:'2hrs'})
+            res.status(201).json(encode({user,token}))
 
-    // }
-    // catch (err) {
-    //     console.log(err)
-    //         res.status(500).json({message:'Internal server error'})
-    // }
+         })
+
+    }
+    catch (err) {
+        console.log(err)
+            res.status(500).json({message:'Internal server error'})
+    }
 })
 
 
@@ -90,8 +89,6 @@ router.post('/login', async (req,res) => {
 
 router.post('/register', upload.single('img'),async (req,res, next) => {
 
-
-     console.log(req.files)
 
     let { email, password, first_name, last_name, middle_name, phone } = req.body
 
@@ -122,7 +119,7 @@ router.post('/register', upload.single('img'),async (req,res, next) => {
 })
 
 
-router.get('/users',  async (req, res) => {
+router.get('/users', isAuthenticated, async (req, res) => {
     
     try {
 
@@ -131,6 +128,7 @@ router.get('/users',  async (req, res) => {
         
 
         res.status(200).json(encode({data:result}))
+        
     }
     catch(err) {
       res.status(500).json({message:'Internal server error'})

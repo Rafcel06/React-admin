@@ -20,7 +20,7 @@ function Home() {
    let fakeApi = 'https://jsonplaceholder.typicode.com/posts'
    const navigationRef = useRef(null)
    const { BackDropModal, hideBackDrop, showBackDrop } = useBackDrop()
-   const {data, error,getData, postData,updateData,deleteData} = useFetch(process.env.REACT_APP_URL + '/users')
+   const {fetchData, error,getData, postData,updateData,deleteData} = useFetch(process.env.REACT_APP_URL + '/users')
 
 
    const hideShow = () => {
@@ -29,7 +29,7 @@ function Home() {
 
 
   useEffect(() => {
-    console.log(data)
+    console.log(fetchData) 
   },[])
 
 
@@ -44,7 +44,7 @@ function Home() {
           </div>
            <ul className='navigation-list'>
                <Link to={''} className="navigation-links"><AutoAwesomeMosaicIcon className='navigation-icons'/> Dashboard</Link>
-               <Link to={'analytics'} className="navigation-links"><AnalyticsIcon className='navigation-icons'/> Analytics</Link>
+               <Link to={'analytics'} className="navigation-links"><AnalyticsIcon className='navigation-icons'/> Table</Link>
                <Link to={'report'} className="navigation-links"><BarChartIcon className='navigation-icons'/> Report</Link>
            </ul>
             <ul className='navigation-list-logout'>

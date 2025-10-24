@@ -12,6 +12,7 @@ import axios from "axios";
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
 
 
+
 const Login = () => {
 
   const { handleSubmit, register ,formState} = useForm()
@@ -37,13 +38,15 @@ const Login = () => {
 
   const submit = (data) => {  
 
-    axios.post(process.env.REACT_APP_URL + '/login', data)
+    console.log(setEncode(data))
+
+    axios.post(process.env.REACT_APP_URL + '/login',{ parsed :setEncode(data)})
         .then((response) => {
-            //  let decodeData =  setDecode(response.data)
-              setSecureStorage(process.env.REACT_APP_STORAGE_KEY, response.data.token)
+             let decodeData =  setDecode(response.data)
+              setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData.token)
               navigate('/home')
           })
-                 .catch((err) => {
+        .catch((err) => {
             console.log(err)
           
           })

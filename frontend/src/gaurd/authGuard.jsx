@@ -1,10 +1,12 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
+import useLocalStorage from '../customHooks/useLocalStorage'
 
-const authGuard = ({children}) => {
+const AuthGuard = ({children}) => {
      
+const {getSecureStorage} = useLocalStorage()
 
-    const authenticated = true
+    const authenticated = getSecureStorage(process.env.REACT_APP_STORAGE_KEY)
 
 
     if (!authenticated) {
@@ -14,4 +16,4 @@ const authGuard = ({children}) => {
     return   children
 }
 
-export default authGuard
+export default AuthGuard

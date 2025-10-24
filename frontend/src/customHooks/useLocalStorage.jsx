@@ -7,8 +7,8 @@ const useLocalStorage = () => {
            secureLocalStorage.setItem(key,value)
     }
 
-    const getSecureStorage = (key, value) => {
-           secureLocalStorage.getItem(key,value)
+    const getSecureStorage = (key) => {
+           return secureLocalStorage.getItem(key)
     }
 
     const removeSecureStorage = (key) => {

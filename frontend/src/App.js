@@ -1,7 +1,7 @@
 import './App.css';
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import AuthGuard from './gaurd/authGuard.jsx';
+import AuthGuard from './gaurd/AuthGuard.jsx';
 
 
 
