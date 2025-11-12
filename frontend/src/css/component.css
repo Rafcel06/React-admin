@@ -119,14 +119,19 @@
 }
 
 .form-btn {
+  font-size: 17px;
+  position: relative;
   padding: 10px 15px;
   border-radius: 20px;
   border: 0 !important;
   outline: 0 !important;
   background:#6499E9;
   color: white;
-  cursor: pointer;
+  cursor: pointer;  
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .form-btn:active {
@@ -340,8 +345,9 @@
 
 .home-main-content-contain {
   /* border: 1px solid lime; */
-  height: auto;
-  width: 100%;
+   height: auto;
+   width: 100%;
+   padding: 0 1em;  
 }
 
 
@@ -356,17 +362,20 @@
     padding: 0 1em;
   
 }
+
+.home-main-content::-webkit-scrollbar { display: none ;}
 .home-main-content {
-    /* border: 1px solid violet; */
-    width: 100%;
     height: 94vh;
+    width: 100%;
+    overflow-y: scroll !important;
+
 }
 
 
 .logo-admin-contain {
   /* border: 1px solid orange; */
   height: 30vh;
-  width: 100%;
+  width: 100%;  
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -480,3 +489,44 @@
 }
 
 }
+
+
+
+/* Dashboard css  */
+
+
+.table-contain {
+      box-shadow: 6px 6px 14px -2px rgba(0,0,0,0.75);
+-webkit-box-shadow: 6px 6px 14px -2px rgba(0,0,0,0.75);
+-moz-box-shadow: 6px 6px 14px -2px rgba(0,0,0,0.75);
+      margin: 1em 0;
+      border-radius: 10px;
+      /* overflow: hidden !important; */
+          overflow: auto;
+}
+.table-container {
+
+    border-collapse: collapse;
+    width: 100%;
+    height: auto;
+    border-radius: 5px !important;   
+    
+
+}
+
+
+.table-container  th, td {
+   text-align: left;
+   padding: 1em;
+
+  
+}
+
+.table-header {
+  background-color:  #6499E9;
+  color: #Fff;
+}
+
+
+
+

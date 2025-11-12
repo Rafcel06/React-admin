@@ -6,6 +6,7 @@ const Analytics = () => {
     }
   return (
     <h2 style={edited}>Analytics</h2>
+    
   )
 }
 

@@ -2,13 +2,16 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import "../css/component.css";
+import useBackDrop from '../customHooks/useBackDrop';
 
 
 const ForgotEmail = () => {
 
       const { handleSubmit, register,formState } = useForm()
       const { errors} = formState
+        const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
       const submit = (data) => {
+        showBackDrop()
         console.log('submit')
       }
 
@@ -34,11 +37,11 @@ const ForgotEmail = () => {
               <p className="page-link">
                 <Link className="page-link-label" to='/'>Login Account?</Link>
               </p>
-              <button className="form-btn">Sent</button>
+              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Sent</button>
             </form>
           </div>
         </div>
-           <div className="forgot-password-box"></div>
+           <div className="forgot-password-box" ></div>
       </div>
     </div>
   )

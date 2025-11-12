@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import useLocalStorage from "../customHooks/useLocalStorage";
 import axios from "axios";
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
+import useBackDrop from "../customHooks/useBackDrop";
 
 
 
@@ -20,34 +21,37 @@ const Login = () => {
   const { errors } = formState
   const [showPass,setShowPass] = useState(true);
   const {setEncode, setDecode} = useEncryptDecrypt()
+  const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
 
-
+  
   
    const navigate = useNavigate()
 
   const setShowPassword = () => {
-          setShowPass(true)
+          setShowPass(true) 
     
   }
 
     const setHidePassword = () => {
-            setShowPass(false)
+          setShowPass(false)
   }
 
   
 
   const submit = (data) => {  
-
-    console.log(setEncode(data))
-
+  
+    showBackDrop()
     axios.post(process.env.REACT_APP_URL + '/login',{ parsed :setEncode(data)})
         .then((response) => {
              let decodeData =  setDecode(response.data)
+               
               setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData.token)
+              hideBackDrop()
               navigate('/home')
           })
         .catch((err) => {
             console.log(err)
+                     hideBackDrop()
           
           })
   }  
@@ -59,7 +63,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-form-contain">
         <div className="login-box" id="render-chat">
-          
+
         </div>
         <div className="login-box">
           <div className="form-container">
@@ -87,9 +91,9 @@ const Login = () => {
                 </div>
                 <p className="form-errors">{errors.password?.message}</p>
               <p className="page-link">
-                {/* <Link className="page-link-label" to='/forgot-password'>Forgot Password?</Link> */}
+                <Link className="page-link-label" to='/forgot-password'>Forgot Password?</Link>
               </p>
-              <button type="submit" className="form-btn" >Log in</button>
+              <button type="submit" className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Log in</button>
             </form>
           </div>
         </div>

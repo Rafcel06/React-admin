@@ -15,6 +15,5 @@ const decode = (data) => {
 
 
 
-console.log(decode("U2FsdGVkX19twgHOgDYrfog4gjfM7mIpOfeiZE9BbwxI9PMKFfreioS+rbOSx0J17/spAOv+ckrqR6noHDu+ymDwjjxyoUyCwNt/a14/+UY="))
 
 module.exports = { decode, encode }

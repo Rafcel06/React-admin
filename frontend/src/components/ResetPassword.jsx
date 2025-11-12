@@ -5,6 +5,7 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import useBackDrop from '../customHooks/useBackDrop';
 
 
 const ResetPassword = () => {
@@ -16,8 +17,10 @@ const ResetPassword = () => {
       const [showPassCurrent,setCurrentShowPass] = useState(true);
       const [showPassword,setPassword] = useState(true);
       const [showPassConfirm,setCurrentConfirm] = useState(true);
+              const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
     
       const submit = (data) => {
+        showBackDrop()
         console.log(data)
       }
     
@@ -66,7 +69,7 @@ const ResetPassword = () => {
               <p className="page-link">
                 <Link className="page-link-label" to='/'>Login Account?</Link>
               </p>
-              <button className="form-btn">Log in</button>
+              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Reset</button>
             </form>
           </div>
         </div>

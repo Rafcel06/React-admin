@@ -7,10 +7,11 @@ const session = require('express-session')
 const PORT = process.env.PORT || 4000
 const app = express()
 const cors = require('cors')
+const fs = require('fs') 
   
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
-app.use(express.static(path.join(__dirname,'public')))
+app.use(express.static(path.join(__dirname,'public/file')))
 app.use(cors())
 
 app.use(session({
@@ -24,6 +25,10 @@ app.use(session({
 
     }
 }))
+
+
+
+
 
 app.use('/api/v1', authenticate)
 

@@ -64,7 +64,7 @@ function App() {
      
           <Route/>
 
-            <Route path='/forgot-password?12223344' element={
+            <Route path='/forgot-password' element={
                <Suspense fallback={<LoaderPage/>}>
                    <ForgotEmailPage/>
              </Suspense>}/>
