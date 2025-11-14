@@ -8,7 +8,7 @@ const dbConfig = {
     host: 'localhost',  // 127.0.0.1 PORT to point in your working remote server
     user: 'root',
     password: '',
-    database: 'admin_db' // name this base on your db
+    database: 'reactAdmin' // name this base on your db
 };
 
 const pool = mysql.createPool(dbConfig);
