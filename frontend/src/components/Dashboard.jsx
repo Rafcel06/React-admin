@@ -3,6 +3,7 @@ import useModal from '../customHooks/useModal'
 import "../css/component.css";
 
 
+
 const Dashboard = () => {
 
 
@@ -12,55 +13,10 @@ const Dashboard = () => {
 
   return (
      <>
-       <h2>Dashboard</h2>
-         <div className='table-contain'>
-          <table className='table-container'>
-            <thead>
-            <tr className='table-header'>
-                <th>Title 1</th>
-                <th>Title 2</th>
-                <th>Title 3</th>
-                <th>Title 4</th>
-                <th>Title 5</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            <tr>
-                <td>content 1</td>
-                <td>content 2</td>
-                <td>content 3</td>
-                <td>content 4</td>
-                <td>content 5</td>
-            </tr>
-
-                        <tr>
-                <td>content 1</td>
-                <td>content 2</td>
-                <td>content 3</td>
-                <td>content 4</td>
-                <td>content 5</td>
-            </tr>
-
-                        <tr>
-                <td>content 1</td>
-                <td>content 2</td>
-                <td>content 3</td>
-                <td>content 4</td>
-                <td>content 5</td>
-            </tr>
-
-                        <tr>
-                <td>content 1</td>
-                <td>content 2</td>
-                <td>content 3</td>
-                <td>content 4</td>
-                <td>content 5</td>
-            </tr>
-            </tbody>
-
-         </table>
-         </div>
+          <div className='tab-headers'>
+               <h2>Dashboard</h2>
+             </div>
+            
     </>
   )
 }
