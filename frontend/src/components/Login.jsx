@@ -19,6 +19,7 @@ const Login = () => {
   const { handleSubmit, register ,formState} = useForm()
   const { getSecureStorage, setSecureStorage, removeSecureStorage } = useLocalStorage()
   const { errors } = formState
+  const [Invalid,setInvalid] = useState()
   const [showPass,setShowPass] = useState(true);
   const {setEncode, setDecode} = useEncryptDecrypt()
   const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
@@ -39,19 +40,21 @@ const Login = () => {
   
 
   const submit = (data) => {  
+    setInvalid(false)
   
     showBackDrop()
     axios.post(process.env.REACT_APP_URL + '/login',{ parsed :setEncode(data)})
         .then((response) => {
+   
              let decodeData =  setDecode(response.data)
-               
               setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData.token)
               hideBackDrop()
-              navigate('/home')
+              navigate('/home', { replace: true })
           })
         .catch((err) => {
-            console.log(err)
-                     hideBackDrop()
+          console.log(err.response.data.message)
+             setInvalid(err.response.data.message)
+             hideBackDrop()
           
           })
   }  
@@ -89,7 +92,7 @@ const Login = () => {
                 })} />
                   { showPass ?  <VisibilityOffIcon className="input-icons" onClick={setHidePassword}/>  : <RemoveRedEyeIcon className="input-icons" onClick={setShowPassword} />}
                 </div>
-                <p className="form-errors">{errors.password?.message}</p>
+                <p className="form-errors">{Invalid ? Invalid : errors.password?.message}</p>
               <p className="page-link">
                 <Link className="page-link-label" to='/forgot-password'>Forgot Password?</Link>
               </p>

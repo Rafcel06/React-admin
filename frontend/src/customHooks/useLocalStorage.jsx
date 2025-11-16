@@ -15,7 +15,13 @@ const useLocalStorage = () => {
             secureLocalStorage.removeItem(key)
     }
 
-    return {setSecureStorage, getSecureStorage, removeSecureStorage}
+
+
+    const clearSecureStorge = () => {
+       secureLocalStorage.clear()
+    }
+
+    return {setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge}
 }
 
 

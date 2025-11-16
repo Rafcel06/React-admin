@@ -12,19 +12,26 @@ import { Outlet , Link} from "react-router-dom"
 import { useRef } from 'react';
 import useFetch from '../customHooks/useFetch';
 import useBackDrop from '../customHooks/useBackDrop';
+import useLocalStorage from '../customHooks/useLocalStorage';
+import { useNavigate } from 'react-router-dom';
 
 function Home() {
 
 
 
-   let fakeApi = 'https://jsonplaceholder.typicode.com/posts'
    const navigationRef = useRef(null)
+   const navigate = useNavigate()
    const { BackDropModal, hideBackDrop, showBackDrop } = useBackDrop()
    const {fetchData, error,getData, postData,updateData,deleteData} = useFetch(process.env.REACT_APP_URL + '/users')
-
-
+   const {setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge}  = useLocalStorage()
    const hideShow = () => {
        navigationRef.current.classList.toggle('showNav')
+   }
+
+   const gotoLogin = () => {
+  
+            clearSecureStorge()
+  
    }
 
 
@@ -48,7 +55,7 @@ function Home() {
                <Link to={'report'} className="navigation-links"><BarChartIcon className='navigation-icons'/> Report</Link>
            </ul>
             <ul className='navigation-list-logout'>
-               <Link to={'/'} className="navigation-links"><LogoutIcon className='navigation-icons'/> Logout</Link>
+               <Link  to={'/'} className="navigation-links" onClick={gotoLogin}><LogoutIcon className='navigation-icons'/> Logout</Link>
            </ul>
 
   

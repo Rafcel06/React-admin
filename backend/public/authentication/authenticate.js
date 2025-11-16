@@ -60,11 +60,11 @@ router.post('/login', async (req,res) => {
         }
 
 
-         bcryptjs.compare(password, result[0].password , (err,success) => {
+        bcryptjs.compare(password, result[0].password , (err,success) => {
 
-            if(err) {
+            if(!success) {
                 res.status(401).json({message : 'Password does not match'})
-
+                return
             }
 
 
@@ -74,9 +74,10 @@ router.post('/login', async (req,res) => {
 
          })
 
+     
+
     }
     catch (err) {
-        console.log(err)
             res.status(500).json({message:'Internal server error'})
     }
 })
