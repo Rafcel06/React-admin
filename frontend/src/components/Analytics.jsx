@@ -1,14 +1,24 @@
 import React from 'react'
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import DeleteIcon from '@mui/icons-material/Delete';
+import useModal from '../customHooks/useModal';
+
+
+
 const Analytics = () => {
+
+   const   {RenderModal, showModalElement, hideModalElement} = useModal()
+
+    const addUser = () => {
+       showModalElement()
+    }
 
 
   return (
     <>
     <div className='tab-headers'>
                <h2>Table</h2>
-               <button className='table-headers-action'>Add new</button>
+               <button className='table-headers-action' onClick={addUser}>Add new</button>
              </div>
              <div className='table-contain'>
               <table className='table-container'>
@@ -40,6 +50,7 @@ const Analytics = () => {
                 </tbody>
     
              </table>
+                <RenderModal/>
              </div>
     </>
   )

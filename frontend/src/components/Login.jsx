@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../css/component.css";
+import "../css/formStyle.css";
 import { Link } from "react-router-dom";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -11,6 +12,7 @@ import useLocalStorage from "../customHooks/useLocalStorage";
 import axios from "axios";
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
 import useBackDrop from "../customHooks/useBackDrop";
+import useAlert from "../customHooks/useAlert";
 
 
 
@@ -18,6 +20,7 @@ const Login = () => {
 
   const { handleSubmit, register ,formState} = useForm()
   const { getSecureStorage, setSecureStorage, removeSecureStorage } = useLocalStorage()
+  const {showAlert, hideAlert , RenderAlertSuccess, RenderAlertFailed} = useAlert()
   const { errors } = formState
   const [Invalid,setInvalid] = useState()
   const [showPass,setShowPass] = useState(true);
@@ -37,7 +40,9 @@ const Login = () => {
           setShowPass(false)
   }
 
-  
+  useEffect(() => {
+    showAlert()
+  },[])
 
   const submit = (data) => {  
     setInvalid(false)
@@ -46,14 +51,14 @@ const Login = () => {
     axios.post(process.env.REACT_APP_URL + '/login',{ parsed :setEncode(data)})
         .then((response) => {
    
-             let decodeData =  setDecode(response.data)
+             let decodeData =  setDecode(response?.data)
               setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData.token)
               hideBackDrop()
               navigate('/home', { replace: true })
           })
         .catch((err) => {
-          console.log(err.response.data.message)
-             setInvalid(err.response.data.message)
+          console.log(err)
+             setInvalid(err?.response?.data?.message || err?.message)
              hideBackDrop()
           
           })
@@ -73,7 +78,7 @@ const Login = () => {
             <p className="title">Welcome back</p>
             <form className="form" onSubmit={handleSubmit(submit)}>
               <div className="input-contain">
-              <input type="email" className="input" placeholder="Email" {...register('email', {
+              <input type="email" className="input-text" placeholder="Email" {...register('email', {
                 required : {
                   value : true,
                    message : '*Email is required',
@@ -83,7 +88,7 @@ const Login = () => {
               </div>
               <p className="form-errors">{errors.email?.message}</p>
               <div className="input-contain">
-                <input type={showPass ? 'password' : 'text'} className="input" placeholder="Password" {...register('password', {
+                <input type={showPass ? 'password' : 'text'} className="input-text" placeholder="Password" {...register('password', {
                   required : {
                    value: true,
                   message: '*Password is required'
@@ -101,6 +106,7 @@ const Login = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
 }

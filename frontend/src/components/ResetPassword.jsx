@@ -1,5 +1,6 @@
 import React from 'react'
 import "../css/component.css";
+import "../css/formStyle.css";
 import { useForm } from 'react-hook-form'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
@@ -36,7 +37,7 @@ const ResetPassword = () => {
             <form className="form" onSubmit={handleSubmit(submit)}>
 
             <div className="input-contain">
-                <input type={showPassCurrent ? 'password' : 'text'} className="input" placeholder="Current Password" {...register('currentPassword', {
+                <input type={showPassCurrent ? 'password' : 'text'} className="input-text" placeholder="Current Password" {...register('currentPassword', {
                   required : {
                    value: true,
                   message: '*Current Password is required'
@@ -47,7 +48,7 @@ const ResetPassword = () => {
                   <p className="form-errors">{errors.currentPassword?.message}</p>
 
              <div className="input-contain">
-                <input type={showPassword ? 'password' : 'text'} className="input" placeholder="Password" {...register('password', {
+                <input type={showPassword ? 'password' : 'text'} className="input-text" placeholder="Password" {...register('password', {
                   required : {
                    value: true,
                   message: '*Password is required'
@@ -57,7 +58,7 @@ const ResetPassword = () => {
                 </div>
                 <p className="form-errors">{errors.password?.message}</p>
               <div className="input-contain">
-                <input type={showPassConfirm ? 'password' : 'text'} className="input" placeholder="Confirm Password" {...register('confirmPassword', {
+                <input type={showPassConfirm ? 'password' : 'text'} className="input-text" placeholder="Confirm Password" {...register('confirmPassword', {
                   required : {
                    value: true,
                   message: '*Confirm Password is required'

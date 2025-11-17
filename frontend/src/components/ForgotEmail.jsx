@@ -2,6 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import "../css/component.css";
+import "../css/formStyle.css";
 import useBackDrop from '../customHooks/useBackDrop';
 
 
@@ -24,7 +25,7 @@ const ForgotEmail = () => {
             <p className="title">Forgot password</p>
             <form className="form" onSubmit={handleSubmit(submit)}>
                    <div className="input-contain">
-              <input type="email" className="input" placeholder="Email" {...register('email', {
+              <input type="email" className="input-text" placeholder="Email" {...register('email', {
                 required : {
                     value : true,
                     message : '*Email is required'
