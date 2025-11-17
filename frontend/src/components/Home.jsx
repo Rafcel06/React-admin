@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import "../css/component.css";
+import "../css/tableStyle.css";
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import LogoutIcon from '@mui/icons-material/Logout';
