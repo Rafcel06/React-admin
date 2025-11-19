@@ -83,16 +83,17 @@ router.post('/login', async (req,res) => {
 })
 
 
-
 // authentication CRUD
 
 
 router.post('/register', upload.single('image'),async (req,res, next) => {
 
 
-    let { email, password, first_name, last_name, middle_name, phone } = decode(req.body.parsed)
-
-    try {
+   
+    let { email, password, first_name, last_name, middle_name, phone, image } = req.body
+           image = `${req.protocol}://${req.get('host')}/` +  req.file.filename 
+    
+    try { 
     
        let sql =  `SELECT email from users WHERE email = ?`
        let result = await db.executeQuery(sql,[email])
@@ -105,8 +106,8 @@ router.post('/register', upload.single('image'),async (req,res, next) => {
 
 
             const hashed =  await bcryptjs.hash(password, 10)
-            let insertSql = `INSERT INTO users (email, password, first_name,last_name, middle_name, phone) VALUES(?, ?, ?, ?, ?, ?)`
-            let insertResult =  await db.insertQuery(insertSql,[email, hashed, first_name, last_name, middle_name, phone])
+            let insertSql = `INSERT INTO users (email, password, first_name,last_name, middle_name, phone,image) VALUES(?, ?, ?, ?, ?, ?, ?)`
+            let insertResult =  await db.insertQuery(insertSql,[email, hashed, first_name, last_name, middle_name, phone, image])
 
 
             res.status(200).json({message: 'Account succesfully created', data: insertResult})
@@ -223,7 +224,7 @@ router.get('/users', isAuthenticated, async (req, res) => {
     
     try {
 
-        let sql =  `SELECT email, first_name,last_name, middle_name, phone, id  FROM users;`
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users;`
         let result = await db.executeQuery(sql)
         
 

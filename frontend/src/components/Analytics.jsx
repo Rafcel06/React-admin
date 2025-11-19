@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import DeleteIcon from '@mui/icons-material/Delete';
 import useModal from '../customHooks/useModal';
@@ -6,10 +6,13 @@ import { useForm } from 'react-hook-form';
 import useBackDrop from '../customHooks/useBackDrop';
 import "../css/formStyle.css";
 import { useState } from 'react';
+import useFetch from '../customHooks/useFetch';
 
 const Analytics = () => {
 
    const  {RenderModal, showModalElement, hideModalElement} = useModal()
+   const { fetchState, setFetchState, getData, postData, updateData, deleteData} = useFetch(process.env.REACT_APP_URL + 'users')
+   const [tableData, setTableData] = useState()
    const { handleSubmit, reset,register ,formState} = useForm()
    const { errors } = formState;
    const [fileState, setFileState] = useState(false)
@@ -20,8 +23,15 @@ const Analytics = () => {
 
 
     const submit = (data) => {
-      showBackDrop()
       console.log(data)
+      showBackDrop()
+     
+
+      
+
+
+
+
     }
 
 
@@ -43,6 +53,24 @@ const Analytics = () => {
       setFileState(false)
   }
 
+  useEffect(() => {
+       getData(process.env.REACT_APP_URL + 'users')
+       .then((response) => {
+        setTableData(response)
+       })
+       .catch((err) => console.log(err))
+
+       setTimeout(() => {
+
+
+
+
+     
+          //  Object.keys(tableData?.data[0])
+       },1000)
+  },[fetchState])
+
+
 
   return (
     <>
@@ -54,27 +82,40 @@ const Analytics = () => {
               <table className='table-container'>
                 <thead>
                 <tr className='table-header'>
-                    <th>Title 1</th>
-                    <th>Title 2</th>
-                    <th>Title 3</th>
-                    <th>Title 4</th>
-                    <th>Title 5</th>
+                    <th>id</th>
+                    <th>Email</th>
+                    <th>First name</th>
+                    <th>Last name</th>
+                    <th>Middle name</th>
+                    <th>Phone</th>
                     <th className='table-action'>Action</th>
                 </tr>
+
                 </thead>
                 <tbody>
-    
-                <tr>
-                    <td>content 1</td>
-                    <td>content 2</td>
-                    <td>content 3</td>
-                    <td>content 4</td>
-                    <td>content 5</td>
-                    <td className="table-action">
+                  { tableData?.data.length === 0 ? <tr className='table-no-content'><td colSpan={7} className='row-no-content'>No records found</td></tr> : null  }
+
+                    {
+                      tableData?.data.map((mapped) => {
+                        return  tableData?.data?.length ? <tr key={mapped?.id}>
+                          <td>{mapped?.id}</td>
+                          <td>{mapped?.email}</td>
+                          <td>{mapped?.first_name}</td>
+                          <td>{mapped?.middle_name}</td>
+                          <td>{mapped?.last_name}</td>
+                            <td>{mapped?.phone}</td>
+                                <td className="table-action">
                         <button type="button"className="action-btn" ><EditSquareIcon/></button>
                         <button type="button"className="action-btn" ><DeleteIcon/></button>
                     </td>
                 </tr>
+                :  null
+                 
+                      })
+                    }
+                
+               
+              
     
            
                 </tbody>
@@ -96,7 +137,7 @@ const Analytics = () => {
                        <div className="text">
                       <span>{ fileState ? fileState : 'Click to upload image'}</span>
                       </div>
-                      <input type="file" id="file"  {...register('profile', {
+                      <input type="file" id="file"  {...register('image', {
                          onChange: (e) => renderImageFile(e),
                       })
                       }/>
@@ -130,7 +171,16 @@ const Analytics = () => {
 
                 </div>
 
- 
+                  <div className="input-contain">
+                  <label htmlFor="Phone" className='input-label'>Phone</label>
+                   <input type="number" className="input-text" placeholder="Phone" {...register('phone', {
+                      required : {
+                      value : false
+                     },
+       
+                     })}/>
+                            <p className="form-errors">{errors.phone?.message}</p>
+                </div>
 
                  <div className="input-contain">
                   <label htmlFor="email" className='input-label'>Email</label>

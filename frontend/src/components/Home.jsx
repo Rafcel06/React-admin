@@ -29,16 +29,11 @@ function Home() {
        navigationRef.current.classList.toggle('showNav')
    }
 
-   const gotoLogin = () => {
-  
+   const gotoLogin = () => {  
             clearSecureStorge()
-  
    }
 
 
-  useEffect(() => {
-    console.log(fetchData) 
-  },[])
 
 
 

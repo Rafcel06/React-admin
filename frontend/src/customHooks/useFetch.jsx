@@ -9,6 +9,7 @@ const useFetch = (url) => {
 
    const [fetchData, setData] = useState([])
    const [error,setError] = useState()
+   const [fetchState,setFetchState] = useState(false)
    const {setSecureStorage,getSecureStorage,removeSecureStorage} = useLocalStorage()
    const { setEncode, setDecode} = useEncryptDecrypt()
    
@@ -33,7 +34,7 @@ const useFetch = (url) => {
    
     useEffect(() => {
           
-        getData(process.env.REACT_APP_URL + '/users').then((response) => {
+        getData(process.env.REACT_APP_URL + 'users').then((response) => {
           setData(response)
         })
         .catch((err) => {
@@ -86,7 +87,7 @@ const useFetch = (url) => {
 
 
 
-  return  { fetchData, error, getData, postData, updateData, deleteData }
+  return  { fetchData, error, fetchState, setFetchState, getData, postData, updateData, deleteData }
 }
 
 export default useFetch
