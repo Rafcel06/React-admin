@@ -16,12 +16,14 @@ import useAlert from "../customHooks/useAlert";
 
 
 
+
 const Login = () => {
 
   const { handleSubmit, register ,formState} = useForm()
+   const { errors } = formState
   const { getSecureStorage, setSecureStorage, removeSecureStorage } = useLocalStorage()
   const {showAlert, hideAlert , RenderAlertSuccess, RenderAlertFailed} = useAlert()
-  const { errors } = formState
+ 
   const [Invalid,setInvalid] = useState()
   const [showPass,setShowPass] = useState(true);
   const {setEncode, setDecode} = useEncryptDecrypt()
@@ -46,7 +48,6 @@ const Login = () => {
 
   const submit = (data) => {  
     setInvalid(false)
-  
     showBackDrop()
     axios.post(process.env.REACT_APP_URL + '/login',{ parsed :setEncode(data)})
         .then((response) => {
@@ -77,8 +78,10 @@ const Login = () => {
           <div className="form-container">
             <p className="title">Welcome back</p>
             <form className="form" onSubmit={handleSubmit(submit)}>
+
               <div className="input-contain">
-              <input type="email" className="input-text" placeholder="Email" {...register('email', {
+               
+              <input type="email" className="input-text"  placeholder="Email" {...register('email', {
                 required : {
                   value : true,
                    message : '*Email is required',
@@ -87,8 +90,9 @@ const Login = () => {
               })}/>
               </div>
               <p className="form-errors">{errors.email?.message}</p>
-              <div className="input-contain">
-                <input type={showPass ? 'password' : 'text'} className="input-text" placeholder="Password" {...register('password', {
+              
+              <div className="input-contain-icons">
+                <input type={showPass ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Password" {...register('password', {
                   required : {
                    value: true,
                   message: '*Password is required'

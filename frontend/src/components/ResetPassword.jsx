@@ -36,8 +36,8 @@ const ResetPassword = () => {
             <p className="title">Welcome back</p>
             <form className="form" onSubmit={handleSubmit(submit)}>
 
-            <div className="input-contain">
-                <input type={showPassCurrent ? 'password' : 'text'} className="input-text" placeholder="Current Password" {...register('currentPassword', {
+            <div className="input-contain-icons">
+                <input type={showPassCurrent ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Current Password" {...register('currentPassword', {
                   required : {
                    value: true,
                   message: '*Current Password is required'
@@ -47,8 +47,8 @@ const ResetPassword = () => {
                 </div>
                   <p className="form-errors">{errors.currentPassword?.message}</p>
 
-             <div className="input-contain">
-                <input type={showPassword ? 'password' : 'text'} className="input-text" placeholder="Password" {...register('password', {
+             <div className="input-contain-icons">
+                <input type={showPassword ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Password" {...register('password', {
                   required : {
                    value: true,
                   message: '*Password is required'
@@ -57,8 +57,8 @@ const ResetPassword = () => {
                   { showPassword ?  <VisibilityOffIcon className="input-icons" onClick={() => setPassword(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setPassword(true)} />}
                 </div>
                 <p className="form-errors">{errors.password?.message}</p>
-              <div className="input-contain">
-                <input type={showPassConfirm ? 'password' : 'text'} className="input-text" placeholder="Confirm Password" {...register('confirmPassword', {
+              <div className="input-contain-icons">
+                <input type={showPassConfirm ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Confirm Password" {...register('confirmPassword', {
                   required : {
                    value: true,
                   message: '*Confirm Password is required'

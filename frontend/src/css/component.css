@@ -467,9 +467,9 @@
 .dashboard-text {
   font-size: clamp(1.0625rem, 0.8281rem + 0.75vw, 1.50rem);
 }
+
 .dashboard-mini-block {
  
-
   height: 100%;
   width: 150px;
   color: #fff !important;

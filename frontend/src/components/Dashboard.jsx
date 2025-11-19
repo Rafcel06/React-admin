@@ -6,10 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 
 const Dashboard = () => {
 
-
   const { RenderModal,  showModalElement, hideModalElement } = useModal()
-
-
 
   return (
      <>
