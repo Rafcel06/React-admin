@@ -39,7 +39,7 @@ router.use(session({
 
     
 router.post('/login', async (req,res) => {
-   
+
        
     const {email, password} = decode(req.body.parsed)
 
@@ -91,7 +91,12 @@ router.post('/register', upload.single('image'),async (req,res, next) => {
 
    
     let { email, password, first_name, last_name, middle_name, phone, image } = req.body
-           image = `${req.protocol}://${req.get('host')}/` +  req.file.filename 
+
+    
+       if(req.file) {
+           image = `${req.protocol}://${req.get('host')}/` + req.file.filename
+       }
+           
     
     try { 
     
@@ -218,6 +223,24 @@ router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
         res.status(500).json({message:'Internal server error'})
     }
 })
+
+
+router.delete('/delete-profile/:id', async (req,res) => {
+
+    let id = req.params.id
+
+     try {
+       let sql = `DELETE FROM users WHERE id = ?`
+       let result =  await db.executeQuery(sql,[id]);
+
+
+       res.status(201).json({message:result})
+     }  
+     catch (err) {
+         res.status(500).json({message:'Internal server error'})
+     } 
+})
+
 
 
 router.get('/users', isAuthenticated, async (req, res) => {

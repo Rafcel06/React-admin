@@ -1,0 +1,49 @@
+.message-alert-contain {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1.5em;
+}
+
+.message-btn-contain {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    
+
+}
+
+.message-icons {
+    font-size: 50px !important;
+    color:  rgb(124, 0, 0) !important;
+}
+
+.message-title  {
+    font-size: 25px;
+    max-width: 350px;
+    text-align: center;
+}
+
+
+.message-btn {
+   height: 100%;
+   width: 150px;
+   outline:none;
+   border: none;
+   border-radius: 5px;
+       font-size: 15px;
+    color: #fff;
+    cursor: pointer;
+    background-color: #6499E9;
+}
+
+
+.delete-confirm  {
+   background: rgb(124, 0, 0);
+}

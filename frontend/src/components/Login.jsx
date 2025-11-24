@@ -49,7 +49,8 @@ const Login = () => {
   const submit = (data) => {  
     setInvalid(false)
     showBackDrop()
-    axios.post(process.env.REACT_APP_URL + '/login',{ parsed :setEncode(data)})
+    console.log(process.env.REACT_APP_URL)
+    axios.post(process.env.REACT_APP_URL + 'login',{ parsed :setEncode(data)})
         .then((response) => {
    
              let decodeData =  setDecode(response?.data)

@@ -7,6 +7,7 @@ import useBackDrop from '../customHooks/useBackDrop';
 import "../css/formStyle.css";
 import { useState } from 'react';
 import useFetch from '../customHooks/useFetch';
+import MessageAlert from '../messageComponents/MessageAlert'
 
 const Analytics = () => {
 
@@ -16,27 +17,58 @@ const Analytics = () => {
    const { handleSubmit, reset,register ,formState} = useForm()
    const { errors } = formState;
    const [fileState, setFileState] = useState(false)
-     const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
+   const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
+   const [submitState, setSubmitState] = useState({ post : true, edit : false, delete : false })
+ 
+
+
     const addUser = () => {
+       resetFormField()
+       setSubmitState({post:true,edit:true,delete:false}) 
        showModalElement()
+     
+    }
+
+    const editUser = (editData) => {
+     
+        showModalElement()
+        reset({
+           first_name:editData.first_name,
+           last_name : editData.last_name,
+           phone : editData.phone,
+           email : editData.email
+          })
+        setSubmitState({post:false,edit:true,delete:false})
+      
+    }
+
+    const deleteUser = () => {
+      showModalElement()
+        setSubmitState({post:false,edit:false,delete:true}) 
+    
+    }
+
+
+    const resetFormField = () => {
+      reset({
+        first_name :'',
+        last_name : '',
+        phone : '',
+        email : ''
+        })
+        return
     }
 
 
     const submit = (data) => {
       console.log(data)
       showBackDrop()
-     
-
-      
-
-
-
-
     }
 
 
     const renderImageFile = (e) => {
           let file = e.target.files[0]
+          console.log(file)
           setFileState(file.name)
           let reader = new FileReader(file)
           reader.onload = function(e) {
@@ -61,12 +93,6 @@ const Analytics = () => {
        .catch((err) => console.log(err))
 
        setTimeout(() => {
-
-
-
-
-     
-          //  Object.keys(tableData?.data[0])
        },1000)
   },[fetchState])
 
@@ -101,12 +127,13 @@ const Analytics = () => {
                           <td>{mapped?.id}</td>
                           <td>{mapped?.email}</td>
                           <td>{mapped?.first_name}</td>
-                          <td>{mapped?.middle_name}</td>
                           <td>{mapped?.last_name}</td>
+                          <td>{mapped?.middle_name}</td>
+                          
                             <td>{mapped?.phone}</td>
-                                <td className="table-action">
-                        <button type="button"className="action-btn" ><EditSquareIcon/></button>
-                        <button type="button"className="action-btn" ><DeleteIcon/></button>
+                                <td className="table-action"> 
+                        <button type="button"className="action-btn" onClick={() => editUser(mapped)} ><EditSquareIcon/></button>
+                        <button type="button"className="action-btn" onClick={deleteUser}><DeleteIcon/></button>
                     </td>
                 </tr>
                 :  null
@@ -121,10 +148,10 @@ const Analytics = () => {
                 </tbody>
     
              </table>
-                <RenderModal element={
+                <RenderModal element={ submitState.delete ? <MessageAlert method={hideModalElement}/> :
                   <>
 
-                    <h2 className='form-title'>Add user</h2>
+              <h2 className='form-title'>{submitState.post ? 'Add user' : 'Edit user'}</h2>
                
               <form className="form" onSubmit={handleSubmit(submit)}>
 
@@ -214,7 +241,7 @@ const Analytics = () => {
              
             </form>
                     </>
-                    } />
+                   } />
              </div>
     </>
   )
