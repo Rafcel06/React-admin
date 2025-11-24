@@ -8,8 +8,6 @@ import { DELETE_DATA } from '../constants/constant';
 const DeleteData = ({method}) => {
 
 
-  //  const {hideModalElement} = method
-
   const cancelRequest = () => {
     method()
   }

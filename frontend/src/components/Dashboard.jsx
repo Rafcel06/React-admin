@@ -23,6 +23,37 @@ const Dashboard = () => {
                          <p className='dashboard-text'>123</p>
                   </div>
               </div>
+
+              <div className='dasboard-block'>
+                  <div className='dashboard-mini-block'>
+                        <PersonIcon className='dashboard-icons'/>
+                  </div>
+                  <div className='dashboard-mini-block'>
+                         <p className='dashboard-text upper-text'>People</p>
+                         <p className='dashboard-text'>123</p>
+                  </div>
+              </div>
+
+              <div className='dasboard-block'>
+                  <div className='dashboard-mini-block'>
+                        <PersonIcon className='dashboard-icons'/>
+                  </div>
+                  <div className='dashboard-mini-block'>
+                         <p className='dashboard-text upper-text'>People</p>
+                         <p className='dashboard-text'>123</p>
+                  </div>
+              </div>
+
+
+              <div className='dasboard-block'>
+                  <div className='dashboard-mini-block'>
+                        <PersonIcon className='dashboard-icons'/>
+                  </div>
+                  <div className='dashboard-mini-block'>
+                         <p className='dashboard-text upper-text'>People</p>
+                         <p className='dashboard-text'>123</p>
+                  </div>
+              </div>
            </div>
             
     </>

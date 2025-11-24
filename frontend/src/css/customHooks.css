@@ -55,9 +55,9 @@
 }
 
 
-/* alert css  */
+/* snackbar css  */
 
-.alert-container {
+.snackbar-container {
    height: 60px;
   width: 280px;
   display: flex;
@@ -71,7 +71,7 @@
 }
 
 
-.alert-message {
+.snackbar-message {
   background: #e7e7e7;
   color: #373737;
   height: 60px;
@@ -84,7 +84,7 @@
 } 
 
 
-.alert-icons {
+.snackbar-icons {
   margin-right: 0.5em;
 }
 
@@ -94,6 +94,42 @@
 .failed {
   color:red;
 }
+
+
+ /* alert css */
+
+
+.alert-container {
+  height: 100vh;
+  width: 100%;
+  background-color: rgba(0,0,0,0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.alert-contain {
+  height: auto;
+  width: auto;
+  max-width: 500px;
+  padding: 2em;
+}
+
+
+@media (max-width: 800px) { 
+  .alert-contain {
+  height: auto;
+  width: auto;
+  max-width: 400px;
+  padding: 1em;
+}
+}
+
+
+
+
+
+
 
 
 /* Back drop css */

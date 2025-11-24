@@ -12,7 +12,7 @@ import useLocalStorage from "../customHooks/useLocalStorage";
 import axios from "axios";
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
 import useBackDrop from "../customHooks/useBackDrop";
-import useAlert from "../customHooks/useAlert";
+import useSnackBar from "../customHooks/useSnackBar";
 
 
 
@@ -22,7 +22,7 @@ const Login = () => {
   const { handleSubmit, register ,formState} = useForm()
    const { errors } = formState
   const { getSecureStorage, setSecureStorage, removeSecureStorage } = useLocalStorage()
-  const {showAlert, hideAlert , RenderAlertSuccess, RenderAlertFailed} = useAlert()
+  const {showAlert, hideAlert , RenderSnackBarSuccess, RenderSnackBarFailed} = useSnackBar()
  
   const [Invalid,setInvalid] = useState()
   const [showPass,setShowPass] = useState(true);

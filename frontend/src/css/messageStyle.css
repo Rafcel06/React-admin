@@ -25,8 +25,8 @@
 }
 
 .message-title  {
-    font-size: 25px;
-    max-width: 350px;
+    font-size: clamp(1.25rem, 0.8594rem + 1.25vw, 1.5625rem);
+    max-width: 300px;
     text-align: center;
 }
 
