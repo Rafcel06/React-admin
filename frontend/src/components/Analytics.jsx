@@ -8,11 +8,15 @@ import "../css/formStyle.css";
 import { useState } from 'react';
 import useFetch from '../customHooks/useFetch';
 import MessageAlert from '../messageComponents/MessageAlert'
+import useLocalStorage from '../customHooks/useLocalStorage';
+
+
 
 const Analytics = () => {
 
    const  {RenderModal, showModalElement, hideModalElement} = useModal()
-   const { fetchState, setFetchState, getData, postData, updateData, deleteData} = useFetch(process.env.REACT_APP_URL + 'users')
+   const { fetchState, setFetchState, getData, postData, updateData, deleteData} = useFetch('users')
+   const {getSecureStorage}  = useLocalStorage()
    const [tableData, setTableData] = useState()
    const { handleSubmit, reset,register ,formState} = useForm()
    const { errors } = formState;
@@ -68,7 +72,6 @@ const Analytics = () => {
 
     const renderImageFile = (e) => {
           let file = e.target.files[0]
-          console.log(file)
           setFileState(file.name)
           let reader = new FileReader(file)
           reader.onload = function(e) {
@@ -80,15 +83,15 @@ const Analytics = () => {
 
 
   const handleCancelSubmit = () => {
-      hideModalElement()
+      hideModalElement()  
       reset()
       setFileState(false)
   }
 
   useEffect(() => {
-       getData(process.env.REACT_APP_URL + 'users')
+       getData('users')
        .then((response) => {
-        setTableData(response)
+        setTableData(response.data)
        })
        .catch((err) => console.log(err))
 
@@ -106,7 +109,7 @@ const Analytics = () => {
              </div>
              <div className='table-contain'>
               <table className='table-container'>
-                <thead>
+                <thead> 
                 <tr className='table-header'>
                     <th>id</th>
                     <th>Email</th>
@@ -119,7 +122,7 @@ const Analytics = () => {
 
                 </thead>
                 <tbody>
-                  { tableData?.data.length === 0 ? <tr className='table-no-content'><td colSpan={7} className='row-no-content'>No records found</td></tr> : null  }
+                  { tableData?.data.length === 0  || !tableData ? <tr className='table-no-content'><td colSpan={7} className='row-no-content'>No records found</td></tr> : null  }
 
                     {
                       tableData?.data.map((mapped) => {

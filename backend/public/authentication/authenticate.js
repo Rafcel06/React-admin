@@ -69,8 +69,16 @@ router.post('/login', async (req,res) => {
 
 
             let {password, ...user } = result[0]
-            const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY, {expiresIn:'2hrs'})
-            res.status(201).json(encode({user,token}))
+
+
+         
+            const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY, {expiresIn:'10sec'})
+            let decodedToken = jwt.decode(token)
+            const expirationTimeInSeconds = decodedToken.exp;
+            const currentTimeInSeconds = Date.now() / 1000;
+            const tokenExpiration = expirationTimeInSeconds - currentTimeInSeconds;
+            
+            res.status(201).json(encode({user,token,tokenExpiration}))
 
          })
 
@@ -214,12 +222,9 @@ router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
         }
 
     
-
     }
     catch(err) {
 
-        
-              console.log(err)
         res.status(500).json({message:'Internal server error'})
     }
 })
@@ -251,11 +256,10 @@ router.get('/users', isAuthenticated, async (req, res) => {
         let result = await db.executeQuery(sql)
         
 
-        res.status(200).json(encode({data:result}))
-        
+        res.status(200).json({data:result})
     }
     catch(err) {
-      res.status(500).json({message:'Internal server error'})
+        res.status(500).json({message:'Internal server error'})
     }
 })
 

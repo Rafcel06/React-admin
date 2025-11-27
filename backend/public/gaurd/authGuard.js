@@ -10,7 +10,7 @@
       const decode = jwt.verify(token,process.env.AUTHENTICATED_SECRET_KEY)
 
       if (decode.exp <= Date.now() / 1000) {
-        return res.status(401).json({ message: 'Token expired' });
+        return res.status(401).json({ data: 'Token expired' });
       }
      
       req.user = decode
@@ -21,10 +21,10 @@
     catch(err) {
 
       if (err.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'Session is expired' });
+        return res.status(401).json({ data: 'Session is expired' });
       }
 
-      res.status(500).json({message:'Request not allowed'})
+      res.status(500).json({data:'Request not allowed'})
     }
 }
 

@@ -3,6 +3,7 @@ import { useEffect,useState } from 'react'
 import axios from 'axios'
 import useLocalStorage from './useLocalStorage'
 import useEncryptDecrypt from './useEncryptDecrypt'
+import axiosInstance from '../Interceptor/interceptor.js'
 
 const useFetch = (url) => {
   
@@ -10,44 +11,36 @@ const useFetch = (url) => {
    const [fetchData, setData] = useState([])
    const [error,setError] = useState()
    const [fetchState,setFetchState] = useState(false)
-   const {setSecureStorage,getSecureStorage,removeSecureStorage} = useLocalStorage()
+   const {setSecureStorage,getSecureStorage, removeSecureStorage} = useLocalStorage()
    const { setEncode, setDecode} = useEncryptDecrypt()
    
-
-   const config = {
-    "Content-Type" : "application/json",
-    "Authorization" : `Bearer ${getSecureStorage(process.env.REACT_APP_STORAGE_KEY)}`
-   }
-   
-
     
-   const getData =  async (url) => {
+   const getData = async (url) => {
          try {  
-              const response = await axios(url,{headers:config})
-              const data = await setDecode(response.data)
-              return data
+              const  response = await axiosInstance.get(url)
+              return response
          }
          catch(err) {
-               console.log(err.message)
-         }
+               setError(err)
+         }  
   }
    
     useEffect(() => {
           
-        getData(process.env.REACT_APP_URL + 'users').then((response) => {
+        getData(url).then((response) => {
           setData(response)
         })
         .catch((err) => {
-          setError(err.message)
+          setError(err)
         })
 
   },[])
 
 
-     const postData =  async (url,data) => {
+    const postData =  async (url,data) => {
     
         try {
-          const postResponse = await axios.post(url,{parsed:setEncode(data)},{headers : config})
+          const postResponse = await axiosInstance.post(url,{parsed:setEncode(data)})
           return setDecode(postResponse)
 
         }
@@ -57,10 +50,10 @@ const useFetch = (url) => {
     }
 
 
-         const updateData =  async (url,data) => {
+    const updateData =  async (url,data) => {
 
         try {
-          const updateResponse = await axios.update(url,{parsed:setEncode(data)}, { headers : config})
+          const updateResponse = await axiosInstance.update(url,{parsed:setEncode(data)})
           return setDecode(updateResponse)
 
         }
@@ -70,10 +63,10 @@ const useFetch = (url) => {
     }
 
 
-         const deleteData =  async (url,data) => {
+    const deleteData =  async (url,data) => {
 
         try {
-          const deleteResponse = await axios.delete(url,config)
+          const deleteResponse = await axiosInstance.delete(url)
           return setDecode(deleteResponse)
 
         }

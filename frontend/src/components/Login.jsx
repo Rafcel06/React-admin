@@ -16,7 +16,6 @@ import useSnackBar from "../customHooks/useSnackBar";
 
 
 
-
 const Login = () => {
 
   const { handleSubmit, register ,formState} = useForm()
@@ -49,12 +48,11 @@ const Login = () => {
   const submit = (data) => {  
     setInvalid(false)
     showBackDrop()
-    console.log(process.env.REACT_APP_URL)
     axios.post(process.env.REACT_APP_URL + 'login',{ parsed :setEncode(data)})
         .then((response) => {
    
              let decodeData =  setDecode(response?.data)
-              setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData.token)
+              setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData)
               hideBackDrop()
               navigate('/home', { replace: true })
           })

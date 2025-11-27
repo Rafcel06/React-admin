@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+
 import "../css/component.css";
 import "../css/tableStyle.css";
 import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
@@ -10,37 +10,59 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import user from '../images/user-logo.png'
 import { Outlet , Link} from "react-router-dom"
-import { useRef } from 'react';
-import useFetch from '../customHooks/useFetch';
-import useBackDrop from '../customHooks/useBackDrop';
-import useLocalStorage from '../customHooks/useLocalStorage';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SESSION_END } from '../constants/constant';
+import useFetch from "../customHooks/useFetch";
+import useBackDrop from "../customHooks/useBackDrop";
+import useAlert from "../customHooks/useAlert";
+import useLocalStorage from "../customHooks/useLocalStorage";
+import CookieIcon from '@mui/icons-material/Cookie';
+import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
+import tokenExpirationState from "../Interceptor/interceptor"
+import secureLocalStorage from "react-secure-storage";
+
 
 function Home() {
 
-
-
    const navigationRef = useRef(null)
-   const navigate = useNavigate()
    const { BackDropModal, hideBackDrop, showBackDrop } = useBackDrop()
-   const {fetchData, error,getData, postData,updateData,deleteData} = useFetch(process.env.REACT_APP_URL + '/users')
+   const { RenderAlert, showAlertElement, hideAlertElement } = useAlert()
+   const { fetchData,error,setFetchState, getData } = useFetch()
    const {setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge}  = useLocalStorage()
+   const {setEncode,setDecode} = useEncryptDecrypt()
+   const navigate = useNavigate()
+  
+
    const hideShow = () => {
        navigationRef.current.classList.toggle('showNav')
    }
 
    const gotoLogin = () => {  
-            clearSecureStorge()
+        navigate('/')
+        clearSecureStorge()
    }
 
+   const checkSession = () => {
+     if(secureLocalStorage.getItem('ExpiredIn') == "true") {
+        showAlertElement()
+      }
+    }
 
-
-
+  
 
 
 
   return (
-    <div className='home-container'>
+    <div className='home-container' >
+      <RenderAlert element={
+               <>
+                 <CookieIcon className='alert-icons'/>
+                 <h3 className='alert-title'>{SESSION_END}</h3>
+                 <button className='alert-button' onClick={gotoLogin}>Goto login</button>
+
+               </>
+                }/>
        <BackDropModal/>
         <div className="home-navigation showNav" ref={navigationRef}>
           <div className='logo-admin-contain'>
@@ -48,9 +70,9 @@ function Home() {
                  <p className='user-name'>Full Name</p>
           </div>
            <ul className='navigation-list'>
-               <Link to={''} className="navigation-links"><AutoAwesomeMosaicIcon className='navigation-icons'/> Dashboard</Link>
-               <Link to={'analytics'} className="navigation-links"><AnalyticsIcon className='navigation-icons'/> Table</Link>
-               <Link to={'report'} className="navigation-links"><BarChartIcon className='navigation-icons'/> Report</Link>
+               <Link to={''} className="navigation-links" onClick={checkSession}><AutoAwesomeMosaicIcon className='navigation-icons'/> Dashboard</Link>
+               <Link to={'analytics'} className="navigation-links" onClick={checkSession}><AnalyticsIcon className='navigation-icons'/> Table</Link>
+               <Link to={'report'} className="navigation-links" onClick={checkSession}><BarChartIcon className='navigation-icons'/> Report</Link>
            </ul>
             <ul className='navigation-list-logout'>
                <Link  to={'/'} className="navigation-links" onClick={gotoLogin}><LogoutIcon className='navigation-icons'/> Logout</Link>
