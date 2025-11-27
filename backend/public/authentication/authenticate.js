@@ -72,7 +72,7 @@ router.post('/login', async (req,res) => {
 
 
          
-            const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY, {expiresIn:'10sec'})
+            const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY, {expiresIn:process.env.TOKEN_EXPIRATION})
             let decodedToken = jwt.decode(token)
             const expirationTimeInSeconds = decodedToken.exp;
             const currentTimeInSeconds = Date.now() / 1000;
