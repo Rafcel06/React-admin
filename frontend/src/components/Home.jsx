@@ -21,7 +21,7 @@ import CookieIcon from '@mui/icons-material/Cookie';
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
 import tokenExpirationState from "../Interceptor/interceptor"
 import secureLocalStorage from "react-secure-storage";
-
+import { useState } from "react";
 
 function Home() {
 
@@ -31,12 +31,16 @@ function Home() {
    const { fetchData,error,setFetchState, getData } = useFetch()
    const {setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge}  = useLocalStorage()
    const {setEncode,setDecode} = useEncryptDecrypt()
+   const [userAuth,setUserAuth] = useState()
    const navigate = useNavigate()
   
 
    const hideShow = () => {
        navigationRef.current.classList.toggle('showNav')
    }
+
+
+   
 
    const gotoLogin = () => {  
         navigate('/')
@@ -51,7 +55,9 @@ function Home() {
 
   
 
-
+  useEffect(() => {
+     setUserAuth(getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user)
+  },[])
 
   return (
     <div className='home-container' >
@@ -67,7 +73,7 @@ function Home() {
         <div className="home-navigation showNav" ref={navigationRef}>
           <div className='logo-admin-contain'>
                  <img src={user} alt="" className='admin-logo' />
-                 <p className='user-name'>Full Name</p>
+                 <p className='user-name'>{userAuth?.first_name + ' ' +  userAuth?.last_name}</p>
           </div>
            <ul className='navigation-list'>
                <Link to={''} className="navigation-links" onClick={checkSession}><AutoAwesomeMosaicIcon className='navigation-icons'/> Dashboard</Link>

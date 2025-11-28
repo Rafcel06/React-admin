@@ -10,18 +10,6 @@ const { decode, encode} = require('../encodeDecode/encodeDecode');
 const fs = require('fs')
 
 
-router.use(session({
-    secret : 'secret_key_for_auth',
-    resave : false,
-    saveUninitialized : false,
-    cookie : {
-        maxAge : 3600000,
-        secure : false
-        // httpOnly : true
-
-    }
-}))
-
 
  const storage = multer.diskStorage({
 
@@ -94,7 +82,7 @@ router.post('/login', async (req,res) => {
 // authentication CRUD
 
 
-router.post('/register', upload.single('image'),async (req,res, next) => {
+router.post('/register', isAuthenticated, upload.single('image'),async (req,res, next) => {
 
 
    
@@ -138,7 +126,7 @@ router.post('/register', upload.single('image'),async (req,res, next) => {
 
 
 
-router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
+router.put('/update-profile/:id',  isAuthenticated, upload.single('image') , async (req,res) => {
     
 
 
@@ -235,7 +223,7 @@ router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
 })
 
 
-router.delete('/delete-profile/:id', async (req,res) => {
+router.delete('/delete-profile/:id', isAuthenticated,async (req,res) => {
 
     let id = req.params.id
 

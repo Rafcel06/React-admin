@@ -56,7 +56,7 @@ const Analytics = () => {
          showModalElement()
          setSubmitState({post:false,edit:false,delete:true}) 
          setDeleteId(data.id)
-         showBackDrop()
+    
     }
 
 
