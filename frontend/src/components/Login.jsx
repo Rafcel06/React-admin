@@ -104,7 +104,7 @@ const Login = () => {
               <p className="page-link">
                 <Link className="page-link-label" to='/forgot-password'>Forgot Password?</Link>
               </p>
-              <button type="submit" className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Log in</button>
+              <button type="submit" className="form-btn" style={btnStyle} disabled={backDropState}>{ backDropState ? <BackDropModal/> : 'Log in'}</button>
             </form>
           </div>
         </div>

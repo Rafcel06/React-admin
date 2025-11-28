@@ -53,7 +53,7 @@ const useFetch = (url) => {
     const updateData =  async (url,data) => {
 
         try {
-          const updateResponse = await axiosInstance.update(url,{parsed:setEncode(data)})
+          const updateResponse = await axiosInstance.put(url,{parsed:setEncode(data)})
           return setDecode(updateResponse)
 
         }

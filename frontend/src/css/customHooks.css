@@ -166,7 +166,7 @@
 /* Back drop css */
 .loader-spinner {
   
-  margin-right: 5em;
+  /* margin-right: 5em; */
   width: 18px;
   position: absolute;
   /* Subpixels get cut off */

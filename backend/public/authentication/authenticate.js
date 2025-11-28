@@ -98,9 +98,11 @@ router.post('/register', upload.single('image'),async (req,res, next) => {
 
 
    
-    let { email, password, first_name, last_name, middle_name, phone, image } = req.body
+    let { email, password, first_name, last_name, middle_name, phone, image } = decode(req.body.parsed)
 
-    
+       
+           image = ''
+
        if(req.file) {
            image = `${req.protocol}://${req.get('host')}/` + req.file.filename
        }
@@ -139,8 +141,9 @@ router.post('/register', upload.single('image'),async (req,res, next) => {
 router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
     
 
+
     let id = req.params.id
-    let {email, password, first_name, last_name, middle_name, phone} = req.body
+    let {email, password, first_name, last_name, middle_name, phone} = decode(req.body.parsed)
 
 
     let sql = `UPDATE users SET`;
@@ -151,7 +154,8 @@ router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
 
          let sqlCheck = `SELECT image FROM users WHERE id = ?`
          let checkImg = await db.executeQuery(sqlCheck,[id])
-         let splitImg = await checkImg[0].image.split('/')
+         let splitImg = req.file ?  checkImg[0].image.split('/') : ''
+
 
 
     if(fs.existsSync(`./public/file/${splitImg[splitImg.length - 1]}`)) {
@@ -193,7 +197,8 @@ router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
               values.push(middle_name)
         }
 
-        if(req.file.filename) {
+
+        if(req.file) {
              sql += ` image = ?`
              values.push(`${req.protocol}://${req.host}/${req.file.filename}`)
         }
@@ -224,7 +229,7 @@ router.put('/update-profile/:id',  upload.single('image'), async (req,res) => {
     
     }
     catch(err) {
-
+        console.log(err)
         res.status(500).json({message:'Internal server error'})
     }
 })

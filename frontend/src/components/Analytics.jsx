@@ -9,6 +9,7 @@ import { useState } from 'react';
 import useFetch from '../customHooks/useFetch';
 import MessageAlert from '../messageComponents/MessageAlert'
 import useLocalStorage from '../customHooks/useLocalStorage';
+import useSnackBar from '../customHooks/useSnackBar';
 
 
 
@@ -23,12 +24,15 @@ const Analytics = () => {
    const [fileState, setFileState] = useState(false)
    const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
    const [submitState, setSubmitState] = useState({ post : true, edit : false, delete : false })
- 
+   const {showAlert, hideAlert, RenderSnackBarSuccess, RenderSnackBarFailed} = useSnackBar()
+   const [deleteId,setDeleteId] = useState(null)
+   const [editId,setEditId] = useState(null)
+   const [editState,setEditState] = useState(false)
 
 
     const addUser = () => {
        resetFormField()
-       setSubmitState({post:true,edit:true,delete:false}) 
+       setSubmitState({post:true,edit:false,delete:false}) 
        showModalElement()
      
     }
@@ -36,6 +40,8 @@ const Analytics = () => {
     const editUser = (editData) => {
      
         showModalElement()
+        setEditState(true)
+        setEditId(editData.id)
         reset({
            first_name:editData.first_name,
            last_name : editData.last_name,
@@ -46,10 +52,11 @@ const Analytics = () => {
       
     }
 
-    const deleteUser = () => {
-      showModalElement()
-        setSubmitState({post:false,edit:false,delete:true}) 
-    
+    const deleteUser = (data) => {
+         showModalElement()
+         setSubmitState({post:false,edit:false,delete:true}) 
+         setDeleteId(data.id)
+         showBackDrop()
     }
 
 
@@ -65,10 +72,77 @@ const Analytics = () => {
 
 
     const submit = (data) => {
-      console.log(data)
+      
+      if(submitState.post === true && submitState.edit === false && submitState.delete === false) {
+
+          showBackDrop()
+      
+          postData(`register`,data)
+          .then((response) => { 
+            setFetchState(true)
+            hideModalElement()
+            hideBackDrop()
+            
+          })
+          .catch((err) => {
+            setFetchState(true)
+            hideModalElement()
+            hideBackDrop()
+          })
+          setFetchState(false)
+          return
+      }
+
+      if(submitState.post === false && submitState.edit === true && submitState.delete === false) {
+      
+          showBackDrop()
+        
+         
+          
+          updateData(`update-profile/${editId}`,data)
+          .then((response) => { 
+            setFetchState(true)
+            hideModalElement()
+            hideBackDrop()
+            setEditId(null)
+            setEditState(false)
+            
+          })
+          .catch((err) => {
+            setFetchState(true)
+            hideModalElement()
+            hideBackDrop()
+            setEditId(null)
+            setEditState(false)
+          })
+          setFetchState(false)
+          console.log(editState)
+          return
+
+          return
+      }
+
       showBackDrop()
     }
 
+      const deleteRecordUser = () => {
+          let id = deleteId
+          deleteData(`delete-profile/${id}`)
+          .then((response) => { 
+             setFetchState()
+             setDeleteId(null)
+             hideBackDrop()
+             hideModalElement()
+             setSubmitState({post:true,edit:false,delete:false}) 
+          })
+          .catch((err) => {
+            
+            setDeleteId(null)
+            hideBackDrop()
+            hideModalElement()
+            setSubmitState({post:true,edit:false,delete:false}) 
+          })
+    }   
 
     const renderImageFile = (e) => {
           let file = e.target.files[0]
@@ -88,15 +162,17 @@ const Analytics = () => {
       setFileState(false)
   }
 
+
+
+
   useEffect(() => {
+
        getData('users')
        .then((response) => {
         setTableData(response.data)
        })
        .catch((err) => console.log(err))
 
-       setTimeout(() => {
-       },1000)
   },[fetchState])
 
 
@@ -136,7 +212,7 @@ const Analytics = () => {
                             <td>{mapped?.phone}</td>
                                 <td className="table-action"> 
                         <button type="button"className="action-btn" onClick={() => editUser(mapped)} ><EditSquareIcon/></button>
-                        <button type="button"className="action-btn" onClick={deleteUser}><DeleteIcon/></button>
+                        <button type="button"className="action-btn" onClick={() => deleteUser(mapped)}><DeleteIcon/></button>
                     </td>
                 </tr>
                 :  null
@@ -151,7 +227,7 @@ const Analytics = () => {
                 </tbody>
     
              </table>
-                <RenderModal element={ submitState.delete ? <MessageAlert method={hideModalElement}/> :
+                <RenderModal element={ submitState.delete ? <MessageAlert method={{cancel:hideModalElement,confirm: deleteRecordUser}}/> :
                   <>
 
               <h2 className='form-title'>{submitState.post ? 'Add user' : 'Edit user'}</h2>
@@ -181,7 +257,7 @@ const Analytics = () => {
                          <label htmlFor="first_name" className='input-label'>First Name</label>
                          <input type="text" className="input-text" placeholder="First name" {...register('first_name', {
                             required : {
-                            value : true,
+                            value : editState ? false : true,
                             message : '*First name is required',
                             },
                           })}/>
@@ -192,7 +268,7 @@ const Analytics = () => {
                         <label htmlFor="last_name" className='input-label'>Last Name</label>
                         <input type="text" className="input-text" placeholder="Last name" {...register('last_name', {
                            required : {
-                           value : true,
+                           value : editState ? false : true,
                            message : '*Last name is required',
                            },
                          })}/>
@@ -205,7 +281,7 @@ const Analytics = () => {
                   <label htmlFor="Phone" className='input-label'>Phone</label>
                    <input type="number" className="input-text" placeholder="Phone" {...register('phone', {
                       required : {
-                      value : false
+                      value : editState ? false : true
                      },
        
                      })}/>
@@ -216,7 +292,7 @@ const Analytics = () => {
                   <label htmlFor="email" className='input-label'>Email</label>
                    <input type="email" className="input-text" placeholder="Email" {...register('email', {
                       required : {
-                      value : true,
+                      value : editState ? false : true,
                       message : '*Email is required',
                      },
                      pattern : '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
@@ -228,7 +304,7 @@ const Analytics = () => {
                   <label htmlFor="password" className='input-label'>Password</label>
                    <input type="password" className="input-text" placeholder="Password" {...register('password', {
                       required : {
-                      value : true,
+                      value : editState ? false : true,
                       message : '*Password is required',
                      },
                      })}/>
@@ -238,13 +314,14 @@ const Analytics = () => {
 
 
                <div className='form-btn-contain'>
-                  <button type="submit" className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Submit</button>
+                  <button type="submit" className="form-btn" style={btnStyle} disabled={backDropState}>{ backDropState ? <BackDropModal/> : 'Submit'}</button>
                   <button type="button" className="form-btn" onClick={() => handleCancelSubmit()}>Cancel</button>
                </div>
              
             </form>
                     </>
                    } />
+  
              </div>
     </>
   )

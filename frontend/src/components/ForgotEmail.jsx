@@ -13,7 +13,7 @@ const ForgotEmail = () => {
         const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
       const submit = (data) => {
         showBackDrop()
-        console.log('submit')
+
       }
 
   return (
@@ -38,7 +38,7 @@ const ForgotEmail = () => {
               <p className="page-link">
                 <Link className="page-link-label" to='/'>Login Account?</Link>
               </p>
-              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Sent</button>
+              <button className="form-btn" style={btnStyle} disabled={backDropState}>{ backDropState ? <BackDropModal/> : 'Sent'}</button>
             </form>
           </div>
         </div>
