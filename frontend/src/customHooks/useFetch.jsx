@@ -1,19 +1,18 @@
-import React from 'react'
 import { useEffect,useState } from 'react'
-import axios from 'axios'
 import useLocalStorage from './useLocalStorage'
 import useEncryptDecrypt from './useEncryptDecrypt'
 import axiosInstance from '../Interceptor/interceptor.js'
+
 
 const useFetch = (url) => {
   
 
    const [fetchData, setData] = useState([])
-   const [error,setError] = useState()
+   const [errorState,setError] = useState()
    const [fetchState,setFetchState] = useState(false)
    const {setSecureStorage,getSecureStorage, removeSecureStorage} = useLocalStorage()
    const { setEncode, setDecode} = useEncryptDecrypt()
-   
+  
     
    const getData = async (url) => {
          try {  
@@ -24,13 +23,15 @@ const useFetch = (url) => {
                setError(err)
          }  
   }
+
+
    
     useEffect(() => {
           
         getData(url).then((response) => {
           setData(response)
         })
-        .catch((err) => {
+        .catch((err) => {  
           setError(err)
         })
 
@@ -53,7 +54,7 @@ const useFetch = (url) => {
     const updateData =  async (url,data) => {
 
         try {
-          const updateResponse = await axiosInstance.put(url,{parsed:setEncode(data)})
+          const updateResponse = await axiosInstance.update(url,{parsed:setEncode(data)})
           return setDecode(updateResponse)
 
         }
@@ -80,7 +81,7 @@ const useFetch = (url) => {
 
 
 
-  return  { fetchData, error, fetchState, setFetchState, getData, postData, updateData, deleteData }
+  return  { fetchData, errorState, fetchState, setFetchState, getData, postData, updateData, deleteData }
 }
 
 export default useFetch

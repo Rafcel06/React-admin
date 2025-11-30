@@ -14,7 +14,6 @@ const ResetPassword = () => {
       const {handleSubmit, register, formState} =  useForm();
       const {errors} = formState
 
-
       const [showPassCurrent,setCurrentShowPass] = useState(true);
       const [showPassword,setPassword] = useState(true);
       const [showPassConfirm,setCurrentConfirm] = useState(true);

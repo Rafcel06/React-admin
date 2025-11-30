@@ -11,12 +11,13 @@ CREATE TABLE `users` (
   `first_name` varchar(255) DEFAULT NULL,
   `last_name` varchar(255) DEFAULT NULL,
   `middle_name` varchar(255) DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
-INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `middle_name`, `phone`) VALUES
-(1, 'rafcel@gmail.com', '$2b$10$9pacuCNeju/hmca0OIq6sufoXkzkQg6cUiSUF26q7Y/9gjFpgRN9C', 'Test', 'User', '', '123123');
+INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`, `middle_name`,'image' `phone`) VALUES
+(1, 'rafcel@gmail.com', '$2b$10$9pacuCNeju/hmca0OIq6sufoXkzkQg6cUiSUF26q7Y/9gjFpgRN9C', 'Test', 'User', '','', '123123');
 
 
 

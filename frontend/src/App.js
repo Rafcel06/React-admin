@@ -19,7 +19,7 @@ const ResetPasswordPage = lazy(() => import('./components/ResetPassword.jsx'))
 // Authenticated route
 
 const DashboardPage = lazy(() => import('./components/Dashboard.jsx'))
-const AnalyticsPage = lazy(() => import('./components/Analytics.jsx'))
+const AnalyticsPage = lazy(() => import('./components/Users.jsx'))
 const ReportPage = lazy(() => import('./components/Report.jsx'))
 
 function App() {
@@ -48,7 +48,7 @@ function App() {
                      <DashboardPage/>
                    </Suspense>}/>
 
-             <Route path='Analytics' element={
+             <Route path='Users' element={
                    <Suspense fallback={<AuthLoaderPage/>}>
                     <AnalyticsPage/>
                    </Suspense>}/>

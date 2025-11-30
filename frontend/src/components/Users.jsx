@@ -187,7 +187,7 @@ const Analytics = () => {
   return (
     <>
     <div className='tab-headers'>
-               <h2>Table</h2>
+               <h2>Users</h2>
                <button className='table-headers-action' onClick={addUser}>Add new</button>
              </div>
              <div className='table-contain'>

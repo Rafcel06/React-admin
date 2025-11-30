@@ -306,10 +306,8 @@
     align-items: center;
     justify-content: flex-end;
     padding: 0 2em;
- -webkit-box-shadow: 3px 2px 5px 3px rgba(0,0,0,0.55); 
-box-shadow: 3px 2px 5px 3px rgba(0,0,0,0.55);
-position: relative;
-z-index: 5;
+    position: relative;
+    z-index: 5;
   
 }
 
@@ -492,7 +490,7 @@ z-index: 5;
 }
 
 .dashboard-text {
-  font-size: clamp(1.0625rem, 0.8281rem + 0.75vw, 1.50rem);
+  font-size: clamp(0.625rem, 0.2344rem + 1.25vw, 0.9375rem);
 }
 
 .dashboard-mini-block {
@@ -509,14 +507,14 @@ z-index: 5;
 
 .dashboard-mini-block:nth-of-type(2) {
   align-items: flex-start !important;
-  gap: 0.2em;
+  gap: 0.4em;
   
 }
 
 
 
 .dashboard-icons {
-  font-size: 70px !important;
+  font-size: 50px !important;
 }
 
  @media only screen and (max-width: 800px) {

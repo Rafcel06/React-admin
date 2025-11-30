@@ -8,6 +8,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
+import GroupIcon from '@mui/icons-material/Group';
 import user from '../images/user-logo.png'
 import { Outlet , Link} from "react-router-dom"
 import { useEffect, useRef } from 'react';
@@ -86,8 +87,9 @@ function Home() {
           </div>
            <ul className='navigation-list'>
                <Link to={''} className="navigation-links" onClick={checkSession}><AutoAwesomeMosaicIcon className='navigation-icons'/> Dashboard</Link>
-               <Link to={'analytics'} className="navigation-links" onClick={checkSession}><AnalyticsIcon className='navigation-icons'/> Table</Link>
+  
                <Link to={'report'} className="navigation-links" onClick={checkSession}><BarChartIcon className='navigation-icons'/> Report</Link>
+                <Link to={'users'} className="navigation-links" onClick={checkSession}><GroupIcon className='navigation-icons'/> Users</Link>
            </ul>
             <ul className='navigation-list-logout'>
                <Link  to={'/'} className="navigation-links" onClick={gotoLogin}><LogoutIcon className='navigation-icons'/> Logout</Link>
