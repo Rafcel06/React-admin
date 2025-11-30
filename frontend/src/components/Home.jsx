@@ -26,6 +26,7 @@ import { useState } from "react";
 function Home() {
 
    const navigationRef = useRef(null)
+   const homeContainerRef = useRef(null)
    const { BackDropModal, hideBackDrop, showBackDrop } = useBackDrop()
    const { RenderAlert, showAlertElement, hideAlertElement } = useAlert()
    const { fetchData,error,setFetchState, getData } = useFetch()
@@ -33,14 +34,22 @@ function Home() {
    const {setEncode,setDecode} = useEncryptDecrypt()
    const [userAuth,setUserAuth] = useState()
    const navigate = useNavigate()
+   const  [navState, setNavState] = useState(false)
   
 
    const hideShow = () => {
+       setNavState((prevState) => !prevState)
        navigationRef.current.classList.toggle('showNav')
    }
 
+   const hideNavigation = () => {
+        if(!navState) {
+              navigationRef.current.classList.add('showNav')
+              setNavState(true)
+        }
 
-   
+   }
+
 
    const gotoLogin = () => {  
         navigate('/')
@@ -60,7 +69,7 @@ function Home() {
   },[])
 
   return (
-    <div className='home-container' >
+    <div className='home-container' ref={homeContainerRef} onClick={hideNavigation}>
       <RenderAlert element={
                <>
                  <CookieIcon className='alert-icons'/>
@@ -70,7 +79,7 @@ function Home() {
                </>
                 }/>
        <BackDropModal/>
-        <div className="home-navigation showNav" ref={navigationRef}>
+        <div className="home-navigation showNav" ref={navigationRef} onClick={(e) => e.stopPropagation() }>
           <div className='logo-admin-contain'>
                  <img src={user} alt="" className='admin-logo' />
                  <p className='user-name'>{userAuth?.first_name + ' ' +  userAuth?.last_name}</p>

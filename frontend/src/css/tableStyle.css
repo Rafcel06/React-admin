@@ -4,6 +4,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   
 }
 
@@ -15,6 +16,8 @@
     border: none;
     color: #Fff;
     border-radius: 3px;
+    box-shadow: 3px 6px 8px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 3px 6px 8px 0px rgba(0, 0, 0, 0.75);
 
 }
 
@@ -26,6 +29,7 @@
       border-radius: 2px;
       /* overflow: hidden !important; */
           overflow: auto;
+            background-color: #fffafa;
 }
 .table-container {
    

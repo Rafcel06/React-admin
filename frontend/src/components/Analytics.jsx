@@ -10,7 +10,7 @@ import useFetch from '../customHooks/useFetch';
 import MessageAlert from '../messageComponents/MessageAlert'
 import useLocalStorage from '../customHooks/useLocalStorage';
 import useSnackBar from '../customHooks/useSnackBar';
-
+import { useRef } from 'react';
 
 
 const Analytics = () => {
@@ -21,6 +21,7 @@ const Analytics = () => {
    const [tableData, setTableData] = useState()
    const { handleSubmit, reset,register ,formState} = useForm()
    const { errors } = formState;
+   const formUserRef = useRef(null)
    const [fileState, setFileState] = useState(false)
    const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
    const [submitState, setSubmitState] = useState({ post : true, edit : false, delete : false })
@@ -31,6 +32,7 @@ const Analytics = () => {
 
 
     const addUser = () => {
+       setEditState(false)
        resetFormField()
        setSubmitState({post:true,edit:false,delete:false}) 
        showModalElement()
@@ -69,6 +71,10 @@ const Analytics = () => {
         })
         return
     }
+
+    const handleClickSubmitForm = () => {
+        formUserRef.current.requestSubmit()
+    } 
 
 
     const submit = (data) => {
@@ -119,7 +125,8 @@ const Analytics = () => {
           console.log(editState)
           return
 
-          return
+ 
+        
       }
 
       showBackDrop()
@@ -232,7 +239,7 @@ const Analytics = () => {
 
               <h2 className='form-title'>{submitState.post ? 'Add user' : 'Edit user'}</h2>
                
-              <form className="form" onSubmit={handleSubmit(submit)}>
+              <form className="form"  ref={formUserRef} onSubmit={handleSubmit(submit)}>
 
                   <div className="input-contain input-contain-margin-bottom">
                       <label htmlFor="profile" className='input-label'>Profile</label>
@@ -313,12 +320,16 @@ const Analytics = () => {
                 </div>
 
 
-               <div className='form-btn-contain'>
-                  <button type="submit" className="form-btn" style={btnStyle} disabled={backDropState}>{ backDropState ? <BackDropModal/> : 'Submit'}</button>
-                  <button type="button" className="form-btn" onClick={() => handleCancelSubmit()}>Cancel</button>
-               </div>
+              
+            
              
             </form>
+
+             <div className='form-btn-contain'>
+                  <button type="button" className="form-btn" style={btnStyle} disabled={backDropState} onClick={handleClickSubmitForm}>{ backDropState ? <BackDropModal/> : 'Submit'}</button>
+                  <button type="button" className="form-btn" onClick={() => handleCancelSubmit()}>Cancel</button>
+               </div>
+
                     </>
                    } />
   
