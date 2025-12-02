@@ -3,34 +3,43 @@ const isAuthenticated = require('./public/gaurd/authGuard')
 const authenticate = require('./public/authentication/authenticate')
 const path = require('path')
 require('dotenv').config()
-const session = require('express-session')
 const PORT = process.env.PORT || 4000
 const app = express()
 const cors = require('cors')
-const fs = require('fs') 
-  
+const http =  require('http')  
+const socketIo = require('socket.io')
+
+
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(express.static(path.join(__dirname,'public/file')))
 app.use(cors())
 
-app.use(session({
-    secret : process.env.SESSION_SECRET_KEY,
-    resave : false,
-    saveUninitialized : false,
-    cookie : {
-        maxAge : 3600000,
-        // secure : true,
-        // httpOnly : true
-
-    }
-}))
-
-
+ const server = http.createServer(app);
+  const io = socketIo(server, {
+        cors: {
+            origin: "http://localhost:3000",
+            methods: ["GET", "POST"]
+        }
+      }
+    )
 
 
 
 app.use('/api/v1', authenticate)
+
+
+io.on('connection', (socket) => {
+
+     socket.on('message', (data) => {
+      console.log(`Message ${data} From user ${socket.id}`)
+     })
+
+
+     socket.on('disconnect', () => {
+       console.log(`User ${socket.id} leave the room`)
+     })
+})
 
 
 if (process.env.NODE_ENV === 'production') {
@@ -47,7 +56,10 @@ if (process.env.NODE_ENV === 'production') {
 
 
 
-app.listen(PORT, () => {
-    console.log(`Server is running in PORT ${PORT}`)
-})
+server.listen(PORT, () => {
+  console.log(`server running at http://localhost:${PORT}`);
+});
+
+
+
 

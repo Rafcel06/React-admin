@@ -7,7 +7,7 @@ import useBackDrop from '../customHooks/useBackDrop';
 import "../css/formStyle.css";
 import { useState } from 'react';
 import useFetch from '../customHooks/useFetch';
-import MessageAlert from '../messageComponents/MessageAlert'
+import MessageAlert from './messageComponents/MessageAlert'
 import useLocalStorage from '../customHooks/useLocalStorage';
 import useSnackBar from '../customHooks/useSnackBar';
 import { useRef } from 'react';
@@ -222,18 +222,30 @@ const Analytics = () => {
                         <button type="button"className="action-btn" onClick={() => deleteUser(mapped)}><DeleteIcon/></button>
                     </td>
                 </tr>
+ 
                 :  null
                  
                       })
                     }
                 
                
-              
-    
+          
            
                 </tbody>
-    
+
              </table>
+                  <div className='table-footer'>
+                   <div className='pagination-container'>
+                    <p>Row per page</p>
+                    <select name="" className="form-select">
+                           <option value="5" className="select-value">5</option>
+                           <option value="10" className="select-value">10</option>
+                           <option value="100" className="select-value">100</option>
+                    </select>
+                    <p>1 - 5 of 10</p>
+                   </div>
+                </div>
+       
                 <RenderModal element={ submitState.delete ? <MessageAlert method={{cancel:hideModalElement,confirm: deleteRecordUser}}/> :
                   <>
 

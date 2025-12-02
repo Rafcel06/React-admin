@@ -123,6 +123,20 @@
   padding: 0.2em 0.2em;
 }
 
+.form-select {
+      height: 30px;
+    width: 50px;
+    border: none;
+    margin: 0 0.5em;
+    padding: 0 0.5em;
+    border-bottom: 1px solid #000;
+}
+/* 
+.form-select:focus{
+  outline: none;
+  border: none;
+} */
+
 
 .form-title {
   margin: 1em 0.2em;

@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import '../css/messageStyle.css'
+import '../../css/messageStyle.css'
 import ErrorIcon from '@mui/icons-material/Error';
-import { DELETE_DATA } from '../constants/constant';
-import useBackDrop from '../customHooks/useBackDrop';
+import { DELETE_DATA } from '../../constants/constant';
+import useBackDrop from '../../customHooks/useBackDrop';
 
 
 

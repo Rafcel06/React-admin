@@ -258,6 +258,27 @@ router.get('/users', isAuthenticated, async (req, res) => {
 
 
 
+router.get('/users/:limit/:offset', isAuthenticated, async (req, res) => {
+
+
+    let limit = req.params.limit;
+    let offset = req.params.offset;
+    
+    try {
+
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users LIMIT ${limit} OFFSET ${offset};`
+        let result = await db.executeQuery(sql)
+        
+
+        res.status(200).json({data:result})
+    }
+    catch(err) {
+        res.status(500).json({message:'Internal server error'})
+    }
+})
+
+
+
 module.exports = router
 
 

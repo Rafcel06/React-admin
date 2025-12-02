@@ -16,15 +16,14 @@
     border: none;
     color: #Fff;
     border-radius: 3px;
-    box-shadow: 3px 6px 8px 0px rgba(0, 0, 0, 0.75);
-    -webkit-box-shadow: 3px 6px 8px 0px rgba(0, 0, 0, 0.75);
+           box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
 
 }
 
 .table-contain {
-      box-shadow: 6px 6px 14px -2px rgba(0,0,0,0.75);
--webkit-box-shadow: 6px 6px 14px -2px rgba(0,0,0,0.75);
--moz-box-shadow: 6px 6px 14px -2px rgba(0,0,0,0.75);
+               box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.75);
       margin: 1em 0;
       border-radius: 2px;
       /* overflow: hidden !important; */
@@ -69,6 +68,31 @@
 
 
 }
+
+.table-footer {
+  height: 60px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 1em;
+  margin: 0.5em 0;
+    position: sticky;
+  left: 2px;
+}
+
+.pagination-container {
+
+
+  height: 50px;
+  width: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+
+}
+
 
 
 .row-no-content {

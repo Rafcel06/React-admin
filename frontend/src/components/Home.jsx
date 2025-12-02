@@ -20,7 +20,8 @@ import useAlert from "../customHooks/useAlert";
 import useLocalStorage from "../customHooks/useLocalStorage";
 import CookieIcon from '@mui/icons-material/Cookie';
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
-import tokenExpirationState from "../Interceptor/interceptor"
+import Chat from "./chatRoomComponents/Chat";
+
 import secureLocalStorage from "react-secure-storage";
 import { useState } from "react";
 
@@ -58,7 +59,7 @@ function Home() {
    }
 
    const checkSession = () => {
-     if(secureLocalStorage.getItem('ExpiredIn') == "true") {
+     if(secureLocalStorage.getItem('ExpiredIn') === "true") {
         showAlertElement()
       }
     }
@@ -110,7 +111,7 @@ function Home() {
               <Outlet/>
             </div>
         </div>
-      
+         <Chat/>
     </div>
   )
 }

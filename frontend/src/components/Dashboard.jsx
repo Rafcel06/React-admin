@@ -5,6 +5,7 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import useFetch from "../customHooks/useFetch";
 import { useEffect } from "react";
 import { useState } from "react";
+import Charts from "./chartComponents/Charts";
 import moment from "moment";
 
 const Dashboard = () => {
@@ -17,10 +18,47 @@ const [time,setTime] = useState();
 const date = new Date()
 
  useEffect(() => {
-     setMonth(moment(date).format('MMMM Do YYYY')) 
+     setMonth(moment(date).format('LL')) 
      setTime(moment().format('LT'))
  },[date.getDay(), date.getHours()]) 
 
+
+ const LineData  = {
+  labels: ['January', 'February', 'March', 'April', 'May', 'June','July','Augost','Septemper','October','Novermber','December'],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [65, 59, 80, 81, 56, 55, 40,50,20,10,3,17,31],
+    fill: false,
+    backgroundColor: [
+      'rgb(98 148 223 / 80%)'
+
+    ],
+    borderColor: [
+      'rgb(98 148 223 / 100%)'
+
+    ],
+        borderWidth: 2,
+
+  }]
+}
+
+const dougData = {
+  labels: [
+    'Red',
+    'Blue',
+    'Yellow'
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [300, 50, 100],
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+    ],
+    hoverOffset: 4
+  }]
+};
 
  useEffect(() => {
      getData('users')
@@ -77,6 +115,49 @@ const date = new Date()
                          <p className='dashboard-text'>{time}</p>
                   </div>
               </div>
+           </div>
+           <div className="dashboard-chart-container">
+                 <div className="dashboard-chart">
+                      <Charts options={{
+                           type: 'line',
+                           data : LineData,
+                 
+                           options: {
+    animations: {
+      tension: {
+        duration: 3000,
+        easing: 'linear',
+        from: 1,
+        to: 0,
+        loop: true
+      }
+    },
+    scales: {
+      y: { // defining min and max so hiding the dataset does not change scale range
+        min: 0,
+        max: 100
+      }
+    },
+    
+  },
+
+                          }}
+                       width={990}
+                        height={555}
+                          />
+                 </div>
+                 <div className="dashboard-chart">
+                     <Charts 
+                       options={{
+                           type: 'doughnut',
+                           data : dougData,
+                           
+                           
+                     }}
+                        width={300}
+                        height={300}
+                     />
+                 </div>
            </div>
             
     </>

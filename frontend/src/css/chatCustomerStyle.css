@@ -1,0 +1,49 @@
+.chat-logo-contain {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    height: 60px;
+    width: 60px;
+    cursor: pointer;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    background-color: #6499E9;
+}
+
+.chat-icons {
+   font-size: 30px !important;
+}
+
+
+.chat-message-container {
+    height: 100vh;
+    width: 100vw;
+    background-color: rgba(0,0,0,0.55);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 557;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-message-contain { 
+    height: 700px;
+    width: 900px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 6px 6px 14px -2px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 6px 6px 14px -2px rgba(0, 0, 0, 0.75);
+}
+
+
+ @media only screen and (max-width: 800px) { 
+    .chat-logo-contain { 
+    bottom: 20px;
+    right: 20px;
+    }
+}

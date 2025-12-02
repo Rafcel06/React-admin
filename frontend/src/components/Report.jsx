@@ -1,5 +1,7 @@
 import React from 'react'
 
+
+
 const Report = () => {
  
 
@@ -7,6 +9,7 @@ const Report = () => {
     <>
               <div className='tab-headers'>
                <h2>Report</h2>
+               <button>message</button>
              </div>
     </>
   )
