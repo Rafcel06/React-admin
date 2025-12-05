@@ -82,7 +82,7 @@ router.post('/login', async (req,res) => {
 // authentication CRUD
 
 
-router.post('/register', isAuthenticated, upload.single('image'),async (req,res, next) => {
+router.post('/admin/register', isAuthenticated, upload.single('image'),async (req,res, next) => {
 
 
    

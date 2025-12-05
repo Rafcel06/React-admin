@@ -29,6 +29,8 @@ const Analytics = () => {
    const [deleteId,setDeleteId] = useState(null)
    const [editId,setEditId] = useState(null)
    const [editState,setEditState] = useState(false)
+   const [offset,setOffset] = useState(0)
+   const [limit,setLimit] = useState(5)
 
 
     const addUser = () => {
@@ -58,7 +60,7 @@ const Analytics = () => {
          showModalElement()
          setSubmitState({post:false,edit:false,delete:true}) 
          setDeleteId(data.id)
-    
+         setFetchState((prevState) => !prevState)
     }
 
 
@@ -83,7 +85,7 @@ const Analytics = () => {
 
           showBackDrop()
       
-          postData(`register`,data)
+          postData(`admin/register`,data)
           .then((response) => { 
             setFetchState(true)
             hideModalElement()
@@ -170,17 +172,23 @@ const Analytics = () => {
   }
 
 
+  const handlePagination = (e) => {
+      setLimit(e.target.value)
+      setOffset(0)
+  }
+
+
 
 
   useEffect(() => {
 
-       getData('users')
+       getData(`users/${limit}/${offset}`)
        .then((response) => {
         setTableData(response.data)
        })
        .catch((err) => console.log(err))
 
-  },[fetchState])
+  },[fetchState,limit,offset])
 
 
 
@@ -237,12 +245,12 @@ const Analytics = () => {
                   <div className='table-footer'>
                    <div className='pagination-container'>
                     <p>Row per page</p>
-                    <select name="" className="form-select">
+                    <select className="form-select" onChange={handlePagination}>
                            <option value="5" className="select-value">5</option>
                            <option value="10" className="select-value">10</option>
                            <option value="100" className="select-value">100</option>
                     </select>
-                    <p>1 - 5 of 10</p>
+                    <p>1 - {limit} of 100</p>
                    </div>
                 </div>
        

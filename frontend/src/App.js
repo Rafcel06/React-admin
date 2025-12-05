@@ -5,6 +5,8 @@ import AuthGuard from './gaurd/AuthGuard.jsx';
 
 
 
+
+
 //  Components route
 
 const HomePage = lazy(() => import('./components/Home.jsx'));
@@ -15,6 +17,11 @@ const ForgotEmailPage = lazy(() => import('./components/ForgotEmail.jsx'));
 const PageNotFoundPage = lazy(() => import('./components/PageNotFound.jsx'));
 const ResetPasswordPage = lazy(() => import('./components/ResetPassword.jsx'))
 
+
+// chatComponent route
+
+
+const ClientChat = lazy(() => import('./components/chatRoomComponents/ClientChat.jsx'))
 
 // Authenticated route
 
@@ -74,6 +81,13 @@ function App() {
               <Suspense fallback={<LoaderPage/>}>
                       <ResetPasswordPage/>
             </Suspense>}/>
+
+
+            <Route path='/client-chat' element={
+               <Suspense fallback={<LoaderPage/>}>
+                       <ClientChat/>
+               </Suspense>
+            }/>
 
               <Route path='*' element={
                <Suspense fallback={<LoaderPage/>}>

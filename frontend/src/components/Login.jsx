@@ -27,23 +27,22 @@ const Login = () => {
   const [showPass,setShowPass] = useState(true);
   const {setEncode, setDecode} = useEncryptDecrypt()
   const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
-
-  
-  
-   const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const setShowPassword = () => {
-          setShowPass(true) 
-    
+          setShowPass(true)  
   }
 
-    const setHidePassword = () => {
+  const setHidePassword = () => {
           setShowPass(false)
   }
 
   useEffect(() => {
-    showAlert()
+
   },[])
+
+
+
 
   const submit = (data) => {  
     setInvalid(false)
@@ -96,7 +95,6 @@ const Login = () => {
                    value: true,
                   message: '*Password is required'
                   }
-                 // pattern : '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).+$'
                 })} />
                   { showPass ?  <VisibilityOffIcon className="input-icons" onClick={setHidePassword}/>  : <RemoveRedEyeIcon className="input-icons" onClick={setShowPassword} />}
                 </div>

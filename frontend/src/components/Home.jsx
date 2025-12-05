@@ -20,7 +20,7 @@ import useAlert from "../customHooks/useAlert";
 import useLocalStorage from "../customHooks/useLocalStorage";
 import CookieIcon from '@mui/icons-material/Cookie';
 import useEncryptDecrypt from "../customHooks/useEncryptDecrypt";
-import Chat from "./chatRoomComponents/Chat";
+import Chat from "./chatRoomComponents/UserChat";
 
 import secureLocalStorage from "react-secure-storage";
 import { useState } from "react";
@@ -81,7 +81,7 @@ function Home() {
                </>
                 }/>
        <BackDropModal/>
-        <div className="home-navigation showNav" ref={navigationRef} onClick={(e) => e.stopPropagation() }>
+        <div className="home-navigation showNav" ref={navigationRef} onClick={(e) => e.stopPropagation()}>
           <div className='logo-admin-contain'>
                  <img src={user} alt="" className='admin-logo' />
                  <p className='user-name'>{userAuth?.first_name + ' ' +  userAuth?.last_name}</p>

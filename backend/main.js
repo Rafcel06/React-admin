@@ -20,7 +20,8 @@ app.use(cors())
         cors: {
             origin: "http://localhost:3000",
             methods: ["GET", "POST"]
-        }
+        },
+        connectionStateRecovery: {}
       }
     )
 
@@ -32,7 +33,8 @@ app.use('/api/v1', authenticate)
 io.on('connection', (socket) => {
 
      socket.on('message', (data) => {
-      console.log(`Message ${data} From user ${socket.id}`)
+      console.log(socket.id)
+        socket.broadcast.emit('send-message', {message : data, socketId : socket.id})
      })
 
 
