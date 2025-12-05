@@ -24,31 +24,10 @@ const Chat = () => {
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
-    setChatInformation(data)
-    setSelectedChat(true)
-  }
+       setChatInformation(data)
+       setSelectedChat(true)
+       }
 
-
-      useEffect(() => {
-        socket.connect()
-
-            socket.on('send-message', (data) => {
-   
-            
-            setSocketId(data.socketId)
-            renderMessage(data.message)
-           })
-
-    
-      
-      
-             return () => {
-                   socket.off('send-message')
-                   socket.disconnect()
-  
-               }
-
-      },[sendChatState])
 
 
         const renderMessage = (data) => {
@@ -59,11 +38,10 @@ const Chat = () => {
 
         chatBoxRef.current.appendChild(user_Chat)
       
-    
         socket.emit('message',data)
         setIsOwnMessage(true)
 
-        window.scrollTo({
+        chatBoxRef.current.scrollTo({
         left: 0,
         top: chatBoxRef.current.scrollHeight,
         behavior: "smooth"
@@ -83,27 +61,22 @@ const Chat = () => {
 
 
 
+        useEffect(() => {
+        socket.connect()
 
-    
+            socket.on('send-message', (data) => {
+            renderMessage(data.message)
+           })
+
+             return () => {
+                   socket.off('send-message')
+                   socket.disconnect()
+  
+            }
+
+      },[sendChatState])
 
 
-const chatUser = [
-  { name: 'Rio' },
-  { name: 'Ava' },
-  { name: 'Liam' },
-  { name: 'Noah' },
-  { name: 'Mia' },
-  { name: 'Ethan' },
-  { name: 'Sofia' },
-  { name: 'Lucas' },
-  { name: 'Chloe' },
-  { name: 'Daniel' },
-  { name: 'Ella' },
-  { name: 'Oliver' },
-  { name: 'Zoe' },
-  { name: 'Jack' },
-  { name: 'Isabella' }
-];
 
 
   return (
@@ -122,31 +95,28 @@ const chatUser = [
          
                      </div>
                        <div className='user-chat-contain'>
-                           {
-                           chatUser.map((mapped,index) => {
-                              return (
-                    
-                          <div className='user-contain' key={index} onClick={() => handleShowChat(mapped)}>
+                          
+                          <div className='user-contain' onClick={() => handleShowChat('Dummy')}>
                               <div className='user-chat-profile'>
                                  <img src={profile} alt="" className='chat-user-image'/>
                                           <span className='user-status'></span>
                               </div>
                           <div className='user-chat-information'>
-                          <span className='user-chat-name'>{mapped.name}</span>
+                          <span className='user-chat-name'>Dummy</span>
                          </div>
                 
                         </div>
-                              )
-                            })
-                           }
+                   
                          </div>
                  </div>
                  {
-                   selectedChat ? <div className='chat-block-contain'>
+                   selectedChat ? 
+                        
+                        <div className='chat-block-contain'>
                            <div className='user-chat-block-information'>
                                <div className='user-selected-name'>
                                   <img src={profile} alt="" className='user-chat-profile profile-chat-modify'/>
-                                   <span className='user-chat-name user-chat-modify'>{chatInformation.name}</span>
+                                   <span className='user-chat-name user-chat-modify'>Dummy</span>
                                </div> 
                                <div className='user-selected-option'>
                                    <SearchIcon className="input-icons"/>
@@ -165,24 +135,17 @@ const chatUser = [
                       </div> : 
 
                     <div className='chat-block-contain'>
-                     
-
-                          {
-                           chatUser.map((mapped,index) => {
-                              return (
                     
-                               <div className='user-history-chat' key={index} onClick={() => handleShowChat(mapped)}>
+                               <div className='user-history-chat' onClick={() => handleShowChat('Dummy')}>
                                  <div className='user-chat-profile'>
                                  <img src={profile} alt="" className='chat-user-image'/>
                               </div>
                             <div className='user-chat-information user-history-change-flex'>
-                                  <span className='user-chat-name'>{mapped?.name}</span>
+                                  <span className='user-chat-name'>Dummy</span>
                                   <span className='user-chat-name'>asdasdasd</span>
                             </div>
                           </div>
-                              )
-                            })
-                           }
+                       
                       </div>
                  }
                       

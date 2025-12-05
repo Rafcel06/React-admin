@@ -35,6 +35,13 @@ const ClientChat = () => {
         socket.emit('message',data)
         setIsOwnMessage(true)
 
+                chatBoxRef.current.scrollTo({
+        left: 0,
+        top: chatBoxRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+
+
     }
 
 
@@ -44,23 +51,27 @@ const ClientChat = () => {
         renderMessage(data.message)
         setUserChat(false)
         setSendChatState((prevState) =>  !prevState) 
-
+        socket.off('send-message')
+                   socket.disconnect()
 
       }
+
+
+
 
         useEffect(() => {
 
             socket.connect()
+         
             socket.on('send-message', (data) => {
             setSocketId(data.socketId)
             renderMessage(data.message)
-        })
-
-    
+           })    
       
       
                return () => {
                    socket.off('send-message')
+       
                    socket.disconnect()
                }
       

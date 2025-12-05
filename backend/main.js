@@ -21,7 +21,8 @@ app.use(cors())
             origin: "http://localhost:3000",
             methods: ["GET", "POST"]
         },
-        connectionStateRecovery: {}
+    maxDisconnectionDuration: 2 * 60 * 1000,
+
       }
     )
 
@@ -33,13 +34,16 @@ app.use('/api/v1', authenticate)
 io.on('connection', (socket) => {
 
      socket.on('message', (data) => {
-      console.log(socket.id)
         socket.broadcast.emit('send-message', {message : data, socketId : socket.id})
+     })
+
+     socket.on('join-room', (data) => {
+         console.log("User join the chat" + socket.id)
      })
 
 
      socket.on('disconnect', () => {
-       console.log(`User ${socket.id} leave the room`)
+       console.log(`User ${socket.id} leave the chat`)
      })
 })
 

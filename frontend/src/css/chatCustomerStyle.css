@@ -299,6 +299,11 @@
     
  }
 
+ .minimize-chat {
+    scale: 0 !important;
+    position: absolute;
+ }
+
 
 
 
@@ -329,11 +334,13 @@
     width: 90%;
 }
 
-.user-contain {
-    border: none;
-    flex-direction: column;
-    font-size: 12px;
-}
+    .user-contain {
+        border: none;
+        flex-direction: column;
+        align-items: center;
+        width: 70px;
+        font-size: 12px;
+    }
 .user-chat-information {
     height: auto;
     width: auto;
