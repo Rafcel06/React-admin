@@ -15,31 +15,29 @@ import { useEffect } from "react";
 const ClientChat = () => {
 
   const [userChat,setUserChat] = useState(false)
-  const [isOwnMessage,setIsOwnMessage] = useState()
-  const [chatStack,setChatStack] = useState()
   const [sendChatState,setSendChatState] = useState(false)
   const { handleSubmit, reset, register ,formState} = useForm();
-    const [socketId,setSocketId] = useState(null)
   const chatBoxRef = useRef(null)
 
-   const renderMessage = (data) => {
-    setUserChat(true)
+
+   const renderMessage = (data,isOwn) => {
 
         const user_Chat = document.createElement('div')
         const user_Node = document.createTextNode(data)
-              user_Chat.className = (userChat ? "user-reply " : 'client-reply')
+              user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
 
         user_Chat.appendChild(user_Node)
         chatBoxRef.current.appendChild(user_Chat)
         
-        socket.emit('message',data)
-        setIsOwnMessage(true)
+   
 
-                chatBoxRef.current.scrollTo({
+        chatBoxRef.current.scrollTo({
         left: 0,
         top: chatBoxRef.current.scrollHeight,
         behavior: "smooth"
       });
+
+      
 
 
     }
@@ -48,34 +46,33 @@ const ClientChat = () => {
       const submit = (data) => {
 
         reset()
-        renderMessage(data.message)
-        setUserChat(false)
-        setSendChatState((prevState) =>  !prevState) 
-        socket.off('send-message')
-                   socket.disconnect()
+        renderMessage(data.message,true)
+        socket.emit('message',data.message)
 
+    
+       
+   
       }
 
 
-
-
-        useEffect(() => {
-
+        useEffect(() => {  
+    
             socket.connect()
-         
             socket.on('send-message', (data) => {
-            setSocketId(data.socketId)
-            renderMessage(data.message)
+              renderMessage(data.message,false)
+           
            })    
-      
-      
+           
+
+           
+
                return () => {
                    socket.off('send-message')
-       
                    socket.disconnect()
                }
       
-            },[sendChatState])
+            },[])
+
 
 
 

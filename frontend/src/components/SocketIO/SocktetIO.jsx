@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import io from "socket.io-client"
 
 // const Socket = () => {
-
+ 
    const socket = io(process.env.REACT_APP_BACKEND_URL, {
     autoConnect: false
    })

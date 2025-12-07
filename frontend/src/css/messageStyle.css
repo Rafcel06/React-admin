@@ -50,3 +50,9 @@
 .delete-confirm  {
    background: rgb(124, 0, 0);
 }
+
+
+.minimize-chat {
+    scale: 0 !important;
+    position: absolute;
+ }

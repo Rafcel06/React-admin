@@ -14,32 +14,27 @@ import socket from "../SocketIO/SocktetIO";
 const Chat = () => {
 
   const [chatState,setChatState] = useState(false)
-  const [isOwnMessage,setIsOwnMessage] = useState()
   const [selectedChat, setSelectedChat] = useState(false)
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
-  const [socketId,setSocketId] = useState(null)
-  const [sendChatState,setSendChatState] = useState(false)
   const { handleSubmit, reset, register ,formState} = useForm();
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
        setChatInformation(data)
        setSelectedChat(true)
-       }
+  }
 
 
-
-        const renderMessage = (data) => {
+        const renderMessage = (data,isOwn) => {
         const user_Chat = document.createElement('div')
         const user_Node = document.createTextNode(data)
-              user_Chat.className = (userChat ? "user-reply " : 'client-reply')
+              user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
         user_Chat.appendChild(user_Node)
 
         chatBoxRef.current.appendChild(user_Chat)
       
-        socket.emit('message',data)
-        setIsOwnMessage(true)
+  
 
         chatBoxRef.current.scrollTo({
         left: 0,
@@ -52,38 +47,34 @@ const Chat = () => {
 
       const submit = (data) => {
         reset()
-        renderMessage(data.message)
-        setUserChat(false)
-        setSendChatState((prevState) => !prevState)
-
-
+        renderMessage(data.message,true)
+        socket.emit('message',data.message)
       }
 
 
 
         useEffect(() => {
-        socket.connect()
-
+            socket.connect()
             socket.on('send-message', (data) => {
-            renderMessage(data.message)
+            renderMessage(data.message,false)
+
            })
 
              return () => {
                    socket.off('send-message')
                    socket.disconnect()
   
-            }
+               }
 
-      },[sendChatState])
+      },[])
 
 
 
 
   return (
     <>
-    {
-      chatState ?  
-         <div className='chat-message-container' onClick={() => setChatState(false)}>
+ 
+         <div className={ chatState ? "chat-message-container" : "chat-message-container minimize-chat"} onClick={() => setChatState(false)}>
               <div className='chat-message-contain' onClick={(e) => e.stopPropagation()}>
                 <div className='chat-menu'></div>
                  <div className='chat-person-list'>
@@ -109,10 +100,9 @@ const Chat = () => {
                    
                          </div>
                  </div>
-                 {
-                   selectedChat ? 
+      
                         
-                        <div className='chat-block-contain'>
+                        <div className={ selectedChat ? "chat-block-contain" : "chat-block-contain  minimize-chat "}>
                            <div className='user-chat-block-information'>
                                <div className='user-selected-name'>
                                   <img src={profile} alt="" className='user-chat-profile profile-chat-modify'/>
@@ -132,9 +122,9 @@ const Chat = () => {
                               })}/>
                               <button type='submit' className='admin-send-chat-submit'><TelegramIcon/></button>
                            </form>
-                      </div> : 
+                      </div> 
 
-                    <div className='chat-block-contain'>
+                    <div className={ !selectedChat ? "chat-block-contain" : "chat-block-contain  minimize-chat "}>
                     
                                <div className='user-history-chat' onClick={() => handleShowChat('Dummy')}>
                                  <div className='user-chat-profile'>
@@ -147,13 +137,14 @@ const Chat = () => {
                           </div>
                        
                       </div>
-                 }
+        
                       
               </div>
-          </div> : <div className='chat-logo-contain' onClick={() => setChatState(true)}>
+          </div> 
+            <div className={!chatState ? "chat-logo-contain" : "chat-logo-contain minimize-chat"} onClick={() => setChatState(true)}>
            <QuestionAnswerRoundedIcon className='chat-icons' />
       </div> 
-    }
+
    
     
     </>
