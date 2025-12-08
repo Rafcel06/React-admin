@@ -18,6 +18,9 @@ const Chat = () => {
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
   const { handleSubmit, reset, register ,formState} = useForm();
+  const notificationRef = useRef(null)
+  const [notificationCount,setNotificationCount] = useState(0)
+  const [showNotification,setShowNotification] = useState(false)
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
@@ -27,38 +30,66 @@ const Chat = () => {
 
 
         const renderMessage = (data,isOwn) => {
-        const user_Chat = document.createElement('div')
-        const user_Node = document.createTextNode(data)
-              user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
-        user_Chat.appendChild(user_Node)
 
-        chatBoxRef.current.appendChild(user_Chat)
-      
-  
-
-        chatBoxRef.current.scrollTo({
-        left: 0,
-        top: chatBoxRef.current.scrollHeight,
-        behavior: "smooth"
-      });
+       
+             const user_flexing_contain = document.createElement('div')
+                   user_flexing_contain.className =  (isOwn ? "admin-chat-flexing-contain" :  "admin-chat-flexing-client-contain")
+          
+                  
+                  const user_Image = document.createElement('img')
+                        user_Image.src = data.profile
+                        user_Image.className = "user-chat-profile profile-chat-modify"
+                        
+          
+          
+                  const user_Chat = document.createElement('div')
+                  const user_Node = document.createTextNode(data.message)
+                        user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
+          
+                  user_Chat.appendChild(user_Node)
+          
+                  user_flexing_contain.appendChild(user_Chat)
+                       user_flexing_contain.appendChild(user_Image)
+                  chatBoxRef.current.appendChild(user_flexing_contain)
+                  
+                  chatBoxRef.current.scrollTo({
+                  left: 0,
+                  top: chatBoxRef.current.scrollHeight,
+                  behavior: "smooth"
+                });
+          
 
       }
      
 
-      const submit = (data) => {
+      const   submit = (data) => {
         reset()
-        renderMessage(data.message,true)
-        socket.emit('message',data.message)
+        renderMessage({message: data.message, profile : profile},true)
+        socket.emit('message',{message: data.message, profile :profile }, true)
+        
       }
 
 
+      const handleShowChatBox = () => {
+        setChatState(true)
+        setNotificationCount(0)
+      }
+
+    
 
         useEffect(() => {
+          
             socket.connect()
             socket.on('send-message', (data) => {
-            renderMessage(data.message,false)
-
+            renderMessage({message: data.message, profile : data.profile},false)
+            setNotificationCount((prevState) => prevState + 1)
+          
+                if (notificationRef.current) {
+                     notificationRef.current.innerText = notificationCount
+                }
            })
+
+
 
              return () => {
                    socket.off('send-message')
@@ -141,9 +172,10 @@ const Chat = () => {
                       
               </div>
           </div> 
-            <div className={!chatState ? "chat-logo-contain" : "chat-logo-contain minimize-chat"} onClick={() => setChatState(true)}>
-           <QuestionAnswerRoundedIcon className='chat-icons' />
-      </div> 
+            <div className={!chatState ? "chat-logo-contain" : "chat-logo-contain minimize-chat"} onClick={handleShowChatBox}>
+              { notificationCount > 0 ? <span className={ !chatState ? "chat-notification" : "chat-notification minimize-cha"}    ref={notificationRef}>{notificationCount}</span> :'' }
+             <QuestionAnswerRoundedIcon className='chat-icons' />
+          </div> 
 
    
     

@@ -7,41 +7,20 @@ const PORT = process.env.PORT || 4000
 const app = express()
 const cors = require('cors')
 const http =  require('http')  
-const socketIo = require('socket.io')
-
-
+const  { createIO } = require("./public/socketIO/messageSocket")
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(express.static(path.join(__dirname,'public/file')))
 app.use(cors())
-
- const server = http.createServer(app);
-  const io = socketIo(server, {
-        cors: {
-            origin: "http://localhost:3000",
-            methods: ["GET", "POST"]
-        },
-    maxDisconnectionDuration: 2 * 60 * 1000,
-
-      }
-    )
+const server = http.createServer(app);
 
 
+
+
+const io = createIO(server)
 
 app.use('/api/v1', authenticate)
 
-
-io.on('connection', (socket) => {
-
-     socket.on('message', (data) => {
-        socket.broadcast.emit('send-message', {message : data, socketId : socket.id})
-
-     })
-
-     socket.on('disconnect', () => {
-       console.log(`User ${socket.id} leave the chat`)
-     })
-})
 
 
 if (process.env.NODE_ENV === 'production') {

@@ -3,6 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import useFetch from "../customHooks/useFetch";
+import ViewDayIcon from '@mui/icons-material/ViewDay';
 import { useEffect } from "react";
 import { useState } from "react";
 import Charts from "./chartComponents/Charts";
@@ -13,12 +14,14 @@ const Dashboard = () => {
 const { fetchState, setFetchState, getData, postData, updateData, deleteData} = useFetch()
 const [users,setUsers] = useState();
 const [month,setMonth] = useState();
+const [day,setDay] = useState();
 const [time,setTime] = useState();
 
 const date = new Date()
 
  useEffect(() => {
      setMonth(moment(date).format('LL')) 
+     setDay(moment(date).format('dddd'))
      setTime(moment().format('LT'))
  },[date.getDay(), date.getHours()]) 
 
@@ -87,21 +90,11 @@ const dougData = {
 
               <div className='dasboard-block'>
                   <div className='dashboard-mini-block'>
-                        <PersonIcon className='dashboard-icons'/>
+                        <ViewDayIcon className='dashboard-icons'/>
                   </div>
                   <div className='dashboard-mini-block'>
-                         <p className='dashboard-text upper-text'>People</p>
-                         <p className='dashboard-text'>123</p>
-                  </div>
-              </div>
-
-              <div className='dasboard-block'>
-                  <div className='dashboard-mini-block'>
-                        <CalendarMonthIcon className='dashboard-icons'/>
-                  </div>
-                  <div className='dashboard-mini-block'>
-                         <p className='dashboard-text upper-text'>Month</p>
-                         <p className='dashboard-text'>{month}</p>
+                         <p className='dashboard-text upper-text'>Day</p>
+                         <p className='dashboard-text'>{day}</p>
                   </div>
               </div>
 
@@ -115,6 +108,17 @@ const dougData = {
                          <p className='dashboard-text'>{time}</p>
                   </div>
               </div>
+
+              <div className='dasboard-block'>
+                  <div className='dashboard-mini-block'>
+                        <CalendarMonthIcon className='dashboard-icons'/>
+                  </div>
+                  <div className='dashboard-mini-block'>
+                         <p className='dashboard-text upper-text'>Month</p>
+                         <p className='dashboard-text'>{month}</p>
+                  </div>
+              </div>
+
            </div>
            <div className="dashboard-chart-container">
                  <div className="dashboard-chart">
