@@ -52,7 +52,6 @@ function Home() {
 
    }
 
-
    const gotoLogin = () => {  
         navigate('/')
         clearSecureStorge()

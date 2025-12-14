@@ -34,6 +34,25 @@
    font-size: 30px !important;
 }
 
+.client-chat-alert-icons {
+    font-size: 75px !important;
+}
+
+.alert-button-chat {
+    height: 40px;
+    width: 120px;
+    border-radius: 5px;
+    background-color: #6499E9;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
 
 .chat-message-container {
     height: 100vh;
@@ -114,7 +133,6 @@
 
     border-radius: 10px;
     display: flex;
-    justify-content: center;
     align-items: center;
     gap: 1em;
     padding: 0.5em;
@@ -357,6 +375,7 @@
  .client-chat-input {
     padding: 0 1em !important;
     font-size: 15px !important;
+    text-transform: capitalize;
     
  }
 

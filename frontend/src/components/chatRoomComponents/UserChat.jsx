@@ -14,6 +14,7 @@ import socket from "../SocketIO/SocktetIO";
 const Chat = () => {
 
   const [chatState,setChatState] = useState(false)
+  const [rooms, setRooms] = useState([])
   const [selectedChat, setSelectedChat] = useState(false)
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
@@ -26,6 +27,7 @@ const Chat = () => {
   const handleShowChat = (data) => {
        setChatInformation(data)
        setSelectedChat(true)
+       console.log(data)
   }
 
 
@@ -62,10 +64,10 @@ const Chat = () => {
       }
      
 
-      const   submit = (data) => {
+      const  submit = (data) => {
         reset()
         renderMessage({message: data.message, profile : profile},true)
-        socket.emit('message',{message: data.message, profile :profile }, true)
+        socket.emit('message',{message: data.message, profile :profile,to: chatInformation.id }, true)
         
       }
 
@@ -73,6 +75,7 @@ const Chat = () => {
       const handleShowChatBox = () => {
         setChatState(true)
         setNotificationCount(0)
+
       }
 
     
@@ -80,18 +83,23 @@ const Chat = () => {
         useEffect(() => {
           
             socket.connect()
+            socket.emit('refresh')
             socket.on('send-message', (data) => {
             renderMessage({message: data.message, profile : data.profile},false)
+  
             setNotificationCount((prevState) => prevState + 1)
-          
                 if (notificationRef.current) {
                      notificationRef.current.innerText = notificationCount
                 }
            })
 
-
+           socket.on('broadcast-rooms', (rooms) => {
+                console.log(rooms)
+                setRooms(rooms)
+           })
 
              return () => {
+                   socket.off('broadcast-rooms')
                    socket.off('send-message')
                    socket.disconnect()
   
@@ -117,17 +125,22 @@ const Chat = () => {
          
                      </div>
                        <div className='user-chat-contain'>
-                          
-                          <div className='user-contain' onClick={() => handleShowChat('Dummy')}>
-                              <div className='user-chat-profile'>
-                                 <img src={profile} alt="" className='chat-user-image'/>
-                                          <span className='user-status'></span>
-                              </div>
-                          <div className='user-chat-information'>
-                          <span className='user-chat-name'>Dummy</span>
-                         </div>
-                
-                        </div>
+                        
+                        {
+                          rooms.length > 0 ? rooms.map((mapped,index) =>  (  
+                            
+                                 <div className='user-contain' onClick={() => handleShowChat(mapped)} key={index}>
+                                      <div className='user-chat-profile'>
+                                        <img src={mapped.profile} alt="" className='chat-user-image'/>
+                                        <span className='user-status'></span>
+                                      </div>
+                                      <div className='user-chat-information'>
+                                      <span className='user-chat-name'>{mapped.name}</span>
+                                   </div>
+                                </div>
+                            ) 
+                          ) : null
+                        }
                    
                          </div>
                  </div>
@@ -136,8 +149,8 @@ const Chat = () => {
                         <div className={ selectedChat ? "chat-block-contain" : "chat-block-contain  minimize-chat "}>
                            <div className='user-chat-block-information'>
                                <div className='user-selected-name'>
-                                  <img src={profile} alt="" className='user-chat-profile profile-chat-modify'/>
-                                   <span className='user-chat-name user-chat-modify'>Dummy</span>
+                                  <img src={chatInformation.profile} alt="" className='user-chat-profile profile-chat-modify'/>
+                                   <span className='user-chat-name user-chat-modify'>{chatInformation.name}</span>
                                </div> 
                                <div className='user-selected-option'>
                                    <SearchIcon className="input-icons"/>
@@ -157,15 +170,20 @@ const Chat = () => {
 
                     <div className={ !selectedChat ? "chat-block-contain" : "chat-block-contain  minimize-chat "}>
                     
-                               <div className='user-history-chat' onClick={() => handleShowChat('Dummy')}>
-                                 <div className='user-chat-profile'>
-                                 <img src={profile} alt="" className='chat-user-image'/>
-                              </div>
-                            <div className='user-chat-information user-history-change-flex'>
-                                  <span className='user-chat-name'>Dummy</span>
-                                  <span className='user-chat-name'>asdasdasd</span>
-                            </div>
-                          </div>
+                           {
+                          rooms.length > 0 ? rooms.map((mapped,index) =>  (
+                                 <div className='user-contain' onClick={() => handleShowChat(mapped)} key={index}>
+                                      <div className='user-chat-profile'>
+                                        <img src={mapped.profile} alt="" className='chat-user-image'/>
+                                        <span className='user-status'></span>
+                                      </div>
+                                      <div className='user-chat-information'>
+                                      <span className='user-chat-name'>{mapped.name}</span>
+                                   </div>
+                                </div>
+                            )
+                          ) : null
+                        }
                        
                       </div>
         

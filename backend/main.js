@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 4000
 const app = express()
 const cors = require('cors')
 const http =  require('http')  
-const  { createIO } = require("./public/socketIO/messageSocket")
+const  { createIO} = require("./public/socketIO/messageSocket")
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(express.static(path.join(__dirname,'public/file')))
