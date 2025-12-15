@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import EditSquareIcon from '@mui/icons-material/EditSquare';
 import DeleteIcon from '@mui/icons-material/Delete';
 import useModal from '../customHooks/useModal';
-import { useForm } from 'react-hook-form';
+import { Form, useForm } from 'react-hook-form';
 import useBackDrop from '../customHooks/useBackDrop';
 import "../css/formStyle.css";
 import { useState } from 'react';
@@ -66,11 +66,13 @@ const Analytics = () => {
 
     const resetFormField = () => {
       reset({
-        first_name :'',
+        first_name :'', 
         last_name : '',
         phone : '',
-        email : ''
+        email : '',
+        image : null
         })
+        setFileState(false)
         return
     }
 
@@ -80,16 +82,29 @@ const Analytics = () => {
 
 
     const submit = (data) => {
+
       
+      const formData = new FormData()
+
+
+          formData.append('first_name', data.first_name)
+          formData.append('last_name', data.last_name)
+          formData.append('email', data.email)
+          formData.append('phone', data.phone)
+          formData.append('image', data.image[0])
+          formData.append('password', data.password)
+      
+
       if(submitState.post === true && submitState.edit === false && submitState.delete === false) {
 
           showBackDrop()
       
-          postData(`admin/register`,data)
+          postData(`admin/register`,formData)
           .then((response) => { 
             setFetchState(true)
             hideModalElement()
             hideBackDrop()
+            resetFormField()
             
           })
           .catch((err) => {
@@ -104,16 +119,17 @@ const Analytics = () => {
       if(submitState.post === false && submitState.edit === true && submitState.delete === false) {
       
           showBackDrop()
-        
-         
-          
-          updateData(`update-profile/${editId}`,data)
+
+
+
+          updateData(`update-profile/${editId}`,formData)
           .then((response) => { 
             setFetchState(true)
             hideModalElement()
             hideBackDrop()
             setEditId(null)
             setEditState(false)
+            resetFormField()
             
           })
           .catch((err) => {
@@ -122,9 +138,10 @@ const Analytics = () => {
             hideBackDrop()
             setEditId(null)
             setEditState(false)
+      
           })
           setFetchState(false)
-          console.log(editState)
+ 
           return
 
  

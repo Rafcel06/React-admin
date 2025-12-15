@@ -41,7 +41,8 @@ const useFetch = (url) => {
     const postData =  async (url,data) => {
     
         try {
-          const postResponse = await axiosInstance.post(url,{parsed:setEncode(data)})
+          // const postResponse = await axiosInstance.post(url,{parsed:setEncode(data)})
+          const postResponse = await axiosInstance.post(url,data)
           return setDecode(postResponse)
 
         }
@@ -52,9 +53,9 @@ const useFetch = (url) => {
 
 
     const updateData =  async (url,data) => {
-
+  
         try {
-          const updateResponse = await axiosInstance.update(url,{parsed:setEncode(data)})
+          const updateResponse = await axiosInstance.put(url,data)
           return setDecode(updateResponse)
 
         }
@@ -64,7 +65,7 @@ const useFetch = (url) => {
     }
 
 
-    const deleteData =  async (url,data) => {
+    const deleteData =  async (url) => {
 
         try {
           const deleteResponse = await axiosInstance.delete(url)

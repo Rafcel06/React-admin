@@ -52,9 +52,6 @@ const createIO = (server) => {
              
      })
 
-
-
-  
    
      socket.on('disconnect', () => {
        console.log(`User ${socket.id} leave the chat`)

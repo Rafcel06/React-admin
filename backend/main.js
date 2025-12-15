@@ -14,14 +14,9 @@ app.use(express.static(path.join(__dirname,'public/file')))
 app.use(cors())
 const server = http.createServer(app);
 
-
-
-
-const io = createIO(server)
-
 app.use('/api/v1', authenticate)
 
-
+const io = createIO(server)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../frontend/build')));

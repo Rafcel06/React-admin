@@ -84,11 +84,9 @@ router.post('/login', async (req,res) => {
 
 router.post('/admin/register', isAuthenticated, upload.single('image'),async (req,res, next) => {
 
+        // let { email, password, first_name, last_name, middle_name, phone } = decode(req.body.parsed)
+    let { email, password, first_name, last_name, middle_name, phone } = req.body
 
-   
-    let { email, password, first_name, last_name, middle_name, phone, image } = decode(req.body.parsed)
-
-       
            image = ''
 
        if(req.file) {
@@ -126,13 +124,11 @@ router.post('/admin/register', isAuthenticated, upload.single('image'),async (re
 
 
 
-router.put('/update-profile/:id',  isAuthenticated, upload.single('image') , async (req,res) => {
+router.put('/update-profile/:id', isAuthenticated,  upload.single('image') , async (req,res) => {
+
     
-
-
     let id = req.params.id
-    let {email, password, first_name, last_name, middle_name, phone} = decode(req.body.parsed)
-
+    let {email, password, first_name, last_name, middle_name, phone} = req.body
 
     let sql = `UPDATE users SET`;
     let values = []
@@ -187,7 +183,7 @@ router.put('/update-profile/:id',  isAuthenticated, upload.single('image') , asy
 
 
         if(req.file) {
-             sql += ` image = ?`
+             sql += ` image = ?,`
              values.push(`${req.protocol}://${req.host}/${req.file.filename}`)
         }
 
@@ -227,7 +223,33 @@ router.delete('/delete-profile/:id', isAuthenticated,async (req,res) => {
 
     let id = req.params.id
 
+
+
+
      try {
+
+
+         let sqlCheck = `SELECT image FROM users WHERE id = ?`
+         let checkImg = await db.executeQuery(sqlCheck,[id])
+           console.log(checkImg)
+         let splitImg = checkImg[0] ?  checkImg[0].image.split('/') : ''
+
+       
+
+
+
+    if(fs.existsSync(`./public/file/${splitImg[splitImg.length - 1]}`)) {
+
+          fs.unlink(`./public/file/${splitImg[splitImg.length - 1]}`, (err) => {
+              if(err) {
+                  res.status(500).json({message:err})
+              }
+           })
+       }
+
+
+
+
        let sql = `DELETE FROM users WHERE id = ?`
        let result =  await db.executeQuery(sql,[id]);
 

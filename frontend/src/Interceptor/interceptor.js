@@ -3,7 +3,7 @@ import secureLocalStorage from 'react-secure-storage';
 
 const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_URL,  
-  headers: { 'Content-Type': 'application/json' },
+  // headers: { 'Content-Type': 'multipart/form-data' },
 });
 
 
