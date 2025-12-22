@@ -20,7 +20,7 @@ const Login = () => {
 
   const { handleSubmit, register ,formState} = useForm()
    const { errors } = formState
-  const { getSecureStorage, setSecureStorage, removeSecureStorage } = useLocalStorage()
+  const { getSecureStorage, setSecureStorage, removeSecureStorage,clearSecureStorge } = useLocalStorage()
   const {showAlert, hideAlert , RenderSnackBarSuccess, RenderSnackBarFailed} = useSnackBar()
  
   const [Invalid,setInvalid] = useState()
@@ -38,7 +38,9 @@ const Login = () => {
   }
 
   useEffect(() => {
-
+    if(getSecureStorage(process.env.REACT_APP_STORAGE_KEY)) {
+       navigate('/home')
+    }
   },[])
 
 

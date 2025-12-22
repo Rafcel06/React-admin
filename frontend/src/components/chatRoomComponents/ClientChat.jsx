@@ -73,7 +73,6 @@ const ClientChat = () => {
 
       const handleSetClientName = () => {
            
-
            let userChat = v4()
            let userProfile = generateAvatar(userChatInput.current.value)
            setProfileImg(userProfile)
@@ -166,14 +165,14 @@ const ClientChat = () => {
         </form>
       </div>
       </div>
-        <RenderAlert element={             <>
+        <RenderAlert element={
+          <>
                  <AccountCircleIcon className='client-chat-alert-icons'/>
                  <h3 className='alert-title'>User name</h3>
                    <div className="input-contain-icons">
                       <input type="text" className="input-text input-with-icons" placeholder="Enter your name" ref={userChatInput} />
                    </div>
                  <button className='alert-button-chat' style={btnStyle} disabled={backDropState} onClick={handleSetClientName} >{ backDropState ? <BackDropModal/> : 'Set'}</button>
-
                </>}/>
       </div>
     </>

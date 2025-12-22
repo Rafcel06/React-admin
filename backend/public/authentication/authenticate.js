@@ -223,20 +223,15 @@ router.delete('/delete-profile/:id', isAuthenticated,async (req,res) => {
 
     let id = req.params.id
 
-
-
-
      try {
 
 
          let sqlCheck = `SELECT image FROM users WHERE id = ?`
          let checkImg = await db.executeQuery(sqlCheck,[id])
-           console.log(checkImg)
          let splitImg = checkImg[0] ?  checkImg[0].image.split('/') : ''
 
        
-
-
+ 
 
     if(fs.existsSync(`./public/file/${splitImg[splitImg.length - 1]}`)) {
 

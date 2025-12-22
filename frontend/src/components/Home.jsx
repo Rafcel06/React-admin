@@ -82,7 +82,7 @@ function Home() {
        <BackDropModal/>
         <div className="home-navigation showNav" ref={navigationRef} onClick={(e) => e.stopPropagation()}>
           <div className='logo-admin-contain'>
-                 <img src={user} alt="" className='admin-logo' />
+                 <img src={userAuth?.image ? userAuth?.image : user} alt="" className='admin-logo' />
                  <p className='user-name'>{userAuth?.first_name + ' ' +  userAuth?.last_name}</p>
           </div>
            <ul className='navigation-list'>
