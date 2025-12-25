@@ -18,6 +18,7 @@ import useBackDrop from "../../customHooks/useBackDrop";
 import useLocalStorage from "../../customHooks/useLocalStorage";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import useFetch from "../../customHooks/useFetch";
 
 import { v4 } from "uuid" 
 
@@ -35,6 +36,7 @@ const ClientChat = () => {
   const [showPassConfirm,setCurrentConfirm] = useState(true);
   const [profileImg,setProfileImg] = useState()
   const chatBoxRef = useRef(null)
+  const [clientState,setClientState] = useState(false)
   const clientInputRef = (null)
   const [clientInputValue,setClientInputValue] = useState()
 
@@ -177,8 +179,8 @@ const ClientChat = () => {
                       <input type="text" className="input-text input-with-icons" placeholder="Enter your name" ref={userChatInput} />
                    </div>
                  <button className='alert-button-chat' style={btnStyle} disabled={backDropState} onClick={handleSetClientName} >{ backDropState ? <BackDropModal/> : 'Set'}</button> */}
-          <div className="form-container">
-            <p className="title">Create Account</p>
+          <div className="form-container" >
+            <p className="title">{clientState ? "Create Account" : "Logn Account"}</p>
                  <form className="form" onSubmit={handleSubmit(submit)}>
 
             <div className="input-contain">
@@ -203,17 +205,22 @@ const ClientChat = () => {
                   { showPassword ?  <VisibilityOffIcon className="input-icons" onClick={() => setPassword(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setPassword(true)} />}
                 </div>
                 <p className="form-errors">{errors.password?.message}</p>
-              <div className="input-contain-icons">
+              {
+                clientState ? (
+                      <div className="input-contain-icons">
                 <input type={showPassConfirm ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Confirm Password" {...register('confirmPassword', {
                   required : {
-                   value: true,
+                   value: clientState ? true : false,
                   message: '*Confirm Password is required'
                   }
                 })} />
                   { showPassConfirm ?  <VisibilityOffIcon className="input-icons"  onClick={() => setCurrentConfirm(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setCurrentConfirm(true)} />}
                 </div>
+                ) : null
+              }
                 <p className="form-errors">{errors.confirmPassword?.message}</p>
-              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Create user</button>
+                <p class="page-link"><span class="page-link-label" data-discover="true" onClick={() => setClientState((prevState) => !prevState)}>{clientState ? "Login account" : "Create account"}</span></p>
+              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>{clientState ? "Create account" : "Login account"}</button>
             </form>
             </div>
                </>}/>

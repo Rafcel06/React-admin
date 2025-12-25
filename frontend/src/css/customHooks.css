@@ -115,8 +115,7 @@
 .alert-contain {
   height: auto;
   max-width: 500px;
-      padding: 3em 4em;
-  background-color: transparent;
+ background: #fff;
   border-radius: 5px;
   text-align: center;
   display: flex;

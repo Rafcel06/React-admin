@@ -72,12 +72,12 @@ function Home() {
   return (
     <div className='home-container' ref={homeContainerRef} onClick={hideNavigation}>
       <RenderAlert element={
-               <>
+               <div className="session-end-contain">
                  <CookieIcon className='alert-icons'/>
                  <h3 className='alert-title'>{SESSION_END}</h3>
                  <button className='alert-button' onClick={gotoLogin}>Goto login</button>
 
-               </>
+               </div>
                 }/>
        <BackDropModal/>
         <div className="home-navigation showNav" ref={navigationRef} onClick={(e) => e.stopPropagation()}>

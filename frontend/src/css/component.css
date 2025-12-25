@@ -256,6 +256,10 @@
   background: #6499E9;
   color: #fff !important;
 
+} 
+
+.session-end-contain {
+  margin: 3em 4em;
 }
 
 .navigation-links {
