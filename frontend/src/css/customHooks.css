@@ -116,7 +116,7 @@
   height: auto;
   max-width: 500px;
       padding: 3em 4em;
-  background-color: #e7e7e7;
+  background-color: transparent;
   border-radius: 5px;
   text-align: center;
   display: flex;

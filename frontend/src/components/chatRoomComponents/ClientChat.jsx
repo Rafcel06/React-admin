@@ -3,6 +3,7 @@ import { useState } from "react";
 import "../../css/chatCustomerStyle.css";
 import "../../css/customHooks.css";
 import "../../css/formStyle.css";
+import "../../css/component.css";
 import TelegramIcon from '@mui/icons-material/Telegram';
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -15,24 +16,30 @@ import { useEffect } from "react";
 import useGenerateAvatar from "../../customHooks/useGenerateAvatar";
 import useBackDrop from "../../customHooks/useBackDrop";
 import useLocalStorage from "../../customHooks/useLocalStorage";
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+
 import { v4 } from "uuid" 
 
 const ClientChat = () => {
 
-  const [userChat,setUserChat] = useState(false)
+  const [ userChat,setUserChat] = useState()
   const { generateAvatar} = useGenerateAvatar()
   const { setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge } = useLocalStorage()
-  const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
+  const { fetchState, setFetchState, getData, postData, updateData, deleteData} = useFetch()
+  const { BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
   const { RenderAlert, showAlertElement, hideAlertElement } = useAlert()
   const { handleSubmit, reset, register ,formState} = useForm();
+  const {errors} = formState
+  const [showPassword,setPassword] = useState(true);
+  const [showPassConfirm,setCurrentConfirm] = useState(true);
   const [profileImg,setProfileImg] = useState()
   const chatBoxRef = useRef(null)
-  const userChatInput = useRef(null)
+  const clientInputRef = (null)
+  const [clientInputValue,setClientInputValue] = useState()
 
 
    const renderMessage = (data,isOwn) => {
-
-
 
         const user_flexing_contain = document.createElement('div')
               user_flexing_contain.className =  (isOwn ? "user-chat-flexing-contain" :  "user-chat-flexing-client-contain")
@@ -63,21 +70,28 @@ const ClientChat = () => {
     }
 
       const submit = (data) => {
+        // reset()
+        // renderMessage({message: data.message, profile : profileImg},true)
+        // socket.emit('message',{message: data.message, profile : profileImg},true)
+        
 
-        reset()
-        renderMessage({message: data.message, profile : profileImg},true)
-        socket.emit('message',{message: data.message, profile : profileImg},true)
+      }
 
+
+      const handleSendChat = () => {
+
+        // renderMessage({message: clientChatValue, profile : profileImg},true)
+        // socket.emit('message',{message: clientChatValue, profile : profileImg},true)
       }
 
 
       const handleSetClientName = () => {
            
            let userChat = v4()
-           let userProfile = generateAvatar(userChatInput.current.value)
+           let userProfile = generateAvatar('')
            setProfileImg(userProfile)
-           setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,{id: userChat, profile: userProfile,name:userChatInput.current.value})
-           socket.emit('create-room', {id: userChat,profile:userProfile,name: userChatInput.current.value})
+           setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,{id: userChat, profile: userProfile,name:''})
+           socket.emit('create-room', {id: userChat,profile:userProfile,name: ''})
            showBackDrop()  
            setTimeout(() => {
               hideBackDrop()
@@ -123,12 +137,6 @@ const ClientChat = () => {
       
             },[])
 
-
-          
-
-
-
-
   return (
     <>
 
@@ -147,17 +155,13 @@ const ClientChat = () => {
           </div>
         </div>
         <div className="user-chat-block-contain  " ref={chatBoxRef}></div>
-        <form className="chat-form-submit" onSubmit={handleSubmit(submit)}>
+        <form className="chat-form-submit" onSubmit={handleSendChat}>
           <input
             type="text"
             name=""
             className="admin-send-chat-input client-chat-input"
-            {...register("message", {
-                     required : {
-                                  value: true
-                                },
-                onChange : () => setUserChat(true)
-            })}
+            value={clientInputValue}
+            onChange={(e) => setClientInputValue(e.target.value)}
           />
           <button type="submit" className="admin-send-chat-submit">
             <TelegramIcon />
@@ -167,12 +171,51 @@ const ClientChat = () => {
       </div>
         <RenderAlert element={
           <>
-                 <AccountCircleIcon className='client-chat-alert-icons'/>
+            {/* <AccountCircleIcon className='client-chat-alert-icons'/>
                  <h3 className='alert-title'>User name</h3>
                    <div className="input-contain-icons">
                       <input type="text" className="input-text input-with-icons" placeholder="Enter your name" ref={userChatInput} />
                    </div>
-                 <button className='alert-button-chat' style={btnStyle} disabled={backDropState} onClick={handleSetClientName} >{ backDropState ? <BackDropModal/> : 'Set'}</button>
+                 <button className='alert-button-chat' style={btnStyle} disabled={backDropState} onClick={handleSetClientName} >{ backDropState ? <BackDropModal/> : 'Set'}</button> */}
+          <div className="form-container">
+            <p className="title">Create Account</p>
+                 <form className="form" onSubmit={handleSubmit(submit)}>
+
+            <div className="input-contain">
+                 <input type="email" className="input-text"  placeholder="Email" {...register('email', {
+                   required : {
+                   value : true,
+                   message : '*Email is required',
+                },
+                pattern : '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
+              })}
+              />
+                </div>
+                <p className="form-errors">{errors.email?.message}</p>
+
+                     <div className="input-contain-icons">
+                <input type={showPassword ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Password" {...register('password', {
+                  required : {
+                   value: true,
+                  message: '*Password is required'
+                  }
+                })} />
+                  { showPassword ?  <VisibilityOffIcon className="input-icons" onClick={() => setPassword(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setPassword(true)} />}
+                </div>
+                <p className="form-errors">{errors.password?.message}</p>
+              <div className="input-contain-icons">
+                <input type={showPassConfirm ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Confirm Password" {...register('confirmPassword', {
+                  required : {
+                   value: true,
+                  message: '*Confirm Password is required'
+                  }
+                })} />
+                  { showPassConfirm ?  <VisibilityOffIcon className="input-icons"  onClick={() => setCurrentConfirm(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setCurrentConfirm(true)} />}
+                </div>
+                <p className="form-errors">{errors.confirmPassword?.message}</p>
+              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>Create user</button>
+            </form>
+            </div>
                </>}/>
       </div>
     </>

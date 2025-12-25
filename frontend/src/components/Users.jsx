@@ -31,6 +31,7 @@ const Analytics = () => {
    const [editState,setEditState] = useState(false)
    const [offset,setOffset] = useState(0)
    const [limit,setLimit] = useState(5)
+   const [firstName,setFirstName] = useState('')
 
 
     const addUser = () => {

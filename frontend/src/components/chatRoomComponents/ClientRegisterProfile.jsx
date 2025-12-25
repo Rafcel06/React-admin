@@ -1,12 +1,12 @@
 import React from 'react'
 import io from "socket.io-client"
+import { useState } from 'react';
 import '../../css/chatCustomerStyle.css'
 import "../../css/formStyle.css";
 import "../../css/component.css";
 import { useForm } from 'react-hook-form'
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { useState } from 'react';
 import useBackDrop from '../../customHooks/useBackDrop';
 
 const ClientRegisterProfile = () => {
@@ -36,8 +36,8 @@ const ClientRegisterProfile = () => {
 
             <div className="input-contain">
                  <input type="email" className="input-text"  placeholder="Email" {...register('email', {
-                required : {
-                  value : true,
+                   required : {
+                   value : true,
                    message : '*Email is required',
                 },
                 pattern : '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'

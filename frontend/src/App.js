@@ -22,7 +22,7 @@ const ResetPasswordPage = lazy(() => import('./components/ResetPassword.jsx'))
 
 
 const ClientChat = lazy(() => import('./components/chatRoomComponents/ClientChat.jsx'))
-const ClientRegister = lazy(() => import('./components/chatRoomComponents/ClientRegisterProfile.jsx'))
+// const ClientRegister = lazy(() => import('./components/chatRoomComponents/ClientRegisterProfile.jsx'))
 // Authenticated route
 
 const DashboardPage = lazy(() => import('./components/Dashboard.jsx'))
@@ -81,12 +81,12 @@ function App() {
               <Suspense fallback={<LoaderPage/>}>
                       <ResetPasswordPage/>
             </Suspense>}/>
-
+{/* 
             <Route    path='/client-register' element={
               <Suspense fallback={<LoaderPage/>}> 
                      <ClientRegister/>
             </Suspense>}
-             />
+             /> */}
 
             <Route path='/client-chat' element={
                <Suspense fallback={<LoaderPage/>}>
