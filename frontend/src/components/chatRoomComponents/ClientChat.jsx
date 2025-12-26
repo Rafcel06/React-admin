@@ -72,9 +72,21 @@ const ClientChat = () => {
     }
 
       const submit = (data) => {
-        // reset()
+
         // renderMessage({message: data.message, profile : profileImg},true)
         // socket.emit('message',{message: data.message, profile : profileImg},true)
+                reset()
+                showBackDrop()
+                postData('/client/register',data)
+                .then((response) => {
+                    hideBackDrop()
+                    hideAlertElement()
+                    setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data)
+                })
+                .catch((err) => {
+                  console.log(err)
+                   hideBackDrop()
+                })
         
 
       }
@@ -88,6 +100,8 @@ const ClientChat = () => {
 
 
       const handleSetClientName = () => {
+
+   
            
            let userChat = v4()
            let userProfile = generateAvatar('')
