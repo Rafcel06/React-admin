@@ -2,6 +2,7 @@ import { useEffect,useState } from 'react'
 import useLocalStorage from './useLocalStorage'
 import useEncryptDecrypt from './useEncryptDecrypt'
 import axiosInstance from '../Interceptor/interceptor.js'
+import axios from 'axios'
 
 
 const useFetch = (url) => {
@@ -43,7 +44,8 @@ const useFetch = (url) => {
         try {
           // const postResponse = await axiosInstance.post(url,{parsed:setEncode(data)})
           const postResponse = await axiosInstance.post(url,data)
-          return setDecode(postResponse)
+          // return setDecode(postResponse)
+          return postResponse
 
         }
     catch(err) {
@@ -52,11 +54,26 @@ const useFetch = (url) => {
     }
 
 
+
+    const postDataNoAuth = async (url,data) => {
+
+         try {
+
+          const postResponseNoAuth = await axios.post(url,data)
+          return postResponseNoAuth
+
+         }
+         catch (err) {
+            setError(err.message)
+         }
+    }
+
+
     const updateData =  async (url,data) => {
   
         try {
           const updateResponse = await axiosInstance.put(url,data)
-          return setDecode(updateResponse)
+          return updateResponse
 
         }
     catch(err) {
@@ -69,7 +86,7 @@ const useFetch = (url) => {
 
         try {
           const deleteResponse = await axiosInstance.delete(url)
-          return setDecode(deleteResponse)
+          return deleteResponse
 
         }
     catch(err) {
@@ -82,7 +99,7 @@ const useFetch = (url) => {
 
 
 
-  return  { fetchData, errorState, fetchState, setFetchState, getData, postData, updateData, deleteData }
+  return  { fetchData, errorState, fetchState, setFetchState, getData, postData, postDataNoAuth, updateData, deleteData }
 }
 
 export default useFetch

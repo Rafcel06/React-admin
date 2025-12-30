@@ -27,7 +27,7 @@ const ClientChat = () => {
   const [ userChat,setUserChat] = useState()
   const { generateAvatar} = useGenerateAvatar()
   const { setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge } = useLocalStorage()
-  const { fetchState, setFetchState, getData, postData, updateData, deleteData} = useFetch()
+  const { fetchState, setFetchState, getData, postData, postDataNoAuth, updateData, deleteData} = useFetch()
   const { BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
   const { RenderAlert, showAlertElement, hideAlertElement } = useAlert()
   const { handleSubmit, reset, register ,formState} = useForm();
@@ -36,9 +36,14 @@ const ClientChat = () => {
   const [showPassConfirm,setCurrentConfirm] = useState(true);
   const [profileImg,setProfileImg] = useState()
   const chatBoxRef = useRef(null)
-  const [clientState,setClientState] = useState(false)
+  const [clientState,setClientState] = useState(true)
   const clientInputRef = (null)
   const [clientInputValue,setClientInputValue] = useState()
+  const [clientAuthenticationState,setClientAuthenticationState] = useState({
+    register : true,
+    login : false
+  })
+  const [matchPasswordState,setMatchPasswordState] = useState(false)
 
 
    const renderMessage = (data,isOwn) => {
@@ -71,13 +76,26 @@ const ClientChat = () => {
     
     }
 
-      const submit = (data) => {
-
+      const submit = (data) => {  
+           
         // renderMessage({message: data.message, profile : profileImg},true)
         // socket.emit('message',{message: data.message, profile : profileImg},true)
-                reset()
-                showBackDrop()
-                postData('/client/register',data)
+                 
+               if(data.confirmPassword !== data.password && setClientAuthenticationState.register === true) {
+                  setMatchPasswordState(true)
+                  return
+                  
+               }
+
+               if(data.confirmPassword === data.password && setClientAuthenticationState.register === true) {
+                  setMatchPasswordState(false)
+               }
+
+                    showBackDrop()
+
+                if(clientAuthenticationState.login === true && clientAuthenticationState.register === false) {
+  
+                postDataNoAuth(process.env.REACT_APP_URL + '/client/register',data)
                 .then((response) => {
                     hideBackDrop()
                     hideAlertElement()
@@ -87,6 +105,24 @@ const ClientChat = () => {
                   console.log(err)
                    hideBackDrop()
                 })
+                  return 
+                }
+
+                if(clientAuthenticationState.login === false && clientAuthenticationState.register === true) {
+                
+                showBackDrop()
+                postDataNoAuth(process.env.REACT_APP_URL + 'client/register',data)
+                .then((response) => {
+                    hideBackDrop()
+                    hideAlertElement()
+                    setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response)
+                })
+                .catch((err) => {
+                  console.log(err)
+                   hideBackDrop()
+                })
+                  return 
+                }
         
 
       }
@@ -98,21 +134,22 @@ const ClientChat = () => {
         // socket.emit('message',{message: clientChatValue, profile : profileImg},true)
       }
 
+      const handleLoginRegisterState = () => {
+      reset()
+        setClientState((prevState) => !prevState)
+
+        if(clientState) {
+            setClientAuthenticationState({login: false, register: true})
+        }
+            setClientAuthenticationState({login: true, register: false})
+      }
+
 
       const handleSetClientName = () => {
-
-   
-           
+  
            let userChat = v4()
            let userProfile = generateAvatar('')
            setProfileImg(userProfile)
-           setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,{id: userChat, profile: userProfile,name:''})
-           socket.emit('create-room', {id: userChat,profile:userProfile,name: ''})
-           showBackDrop()  
-           setTimeout(() => {
-              hideBackDrop()
-              hideAlertElement()
-           },500)
 
       }
 
@@ -136,7 +173,6 @@ const ClientChat = () => {
                   name : name
                 }
      
-                socket.emit('reconnect', existingData)
             }
 
 
@@ -187,14 +223,9 @@ const ClientChat = () => {
       </div>
         <RenderAlert element={
           <>
-            {/* <AccountCircleIcon className='client-chat-alert-icons'/>
-                 <h3 className='alert-title'>User name</h3>
-                   <div className="input-contain-icons">
-                      <input type="text" className="input-text input-with-icons" placeholder="Enter your name" ref={userChatInput} />
-                   </div>
-                 <button className='alert-button-chat' style={btnStyle} disabled={backDropState} onClick={handleSetClientName} >{ backDropState ? <BackDropModal/> : 'Set'}</button> */}
+
           <div className="form-container" >
-            <p className="title">{clientState ? "Create Account" : "Logn Account"}</p>
+            <p className="title">{clientState ? "Create Account" : "Login Account"}</p>
                  <form className="form" onSubmit={handleSubmit(submit)}>
 
             <div className="input-contain">
@@ -225,16 +256,16 @@ const ClientChat = () => {
                 <input type={showPassConfirm ? 'password' : 'text'} className="input-text input-with-icons" placeholder="Confirm Password" {...register('confirmPassword', {
                   required : {
                    value: clientState ? true : false,
-                  message: '*Confirm Password is required'
+                    message: '*Confirm Password is required'
                   }
                 })} />
                   { showPassConfirm ?  <VisibilityOffIcon className="input-icons"  onClick={() => setCurrentConfirm(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setCurrentConfirm(true)} />}
                 </div>
                 ) : null
               }
-                <p className="form-errors">{errors.confirmPassword?.message}</p>
-                <p class="page-link"><span class="page-link-label" data-discover="true" onClick={() => setClientState((prevState) => !prevState)}>{clientState ? "Login account" : "Create account"}</span></p>
-              <button className="form-btn" style={btnStyle} disabled={backDropState}><BackDropModal/>{clientState ? "Create account" : "Login account"}</button>
+                <p className="form-errors">{matchPasswordState ? "*Password does not match" : errors.confirmPassword?.message}</p>
+                <p className="page-link"><span className="page-link-label" data-discover="true" onClick={handleLoginRegisterState}>{clientState ? "Create account" : "Login account" }</span></p>
+              <button className="form-btn" style={btnStyle} disabled={backDropState}>{backDropState ? <BackDropModal/> : clientState ? "Create account" : "Login account"}</button>
             </form>
             </div>
                </>}/>

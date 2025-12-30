@@ -51,7 +51,6 @@ const Login = () => {
     showBackDrop()
     axios.post(process.env.REACT_APP_URL + 'login',{ parsed :setEncode(data)})
         .then((response) => {
-   
              let decodeData =  setDecode(response?.data)
               setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData)
               hideBackDrop()

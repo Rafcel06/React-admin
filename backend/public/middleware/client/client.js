@@ -2,10 +2,10 @@ const express = require('express')
 const router = express.Router()
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const db = require('../db/database')
+const db = require('../../db/database')
 const multer = require('multer');
-const isAuthenticated = require('../gaurd/authGuard')
-const { decode, encode} = require('../encodeDecode/encodeDecode');
+const isAuthenticated = require('../../gaurd/authGuard')
+const { decode, encode} = require('../../encodeDecode/encodeDecode');
 const fs = require('fs')
 
 
@@ -26,10 +26,65 @@ const fs = require('fs')
 
     
 
+
+ router.post('/client/login', async (req,res) => {
+ 
+        
+     const {email, password} = decode(req.body.parsed)
+ 
+     try {
+ 
+         if(!email || !password) {
+              res.status(200).json({message:'required username and password'})
+         }
+ 
+ 
+ 
+         let sql = `SELECT * FROM chat_users WHERE email = ?`
+         let result = await db.executeQuery(sql,[email])
+        
+         if(!result[0]) {
+              res.status(401).json({message:'No account associate on this email'})
+              return
+         }
+ 
+ 
+         bcryptjs.compare(password, result[0].password , (err,success) => {
+ 
+             if(!success) {
+                 res.status(401).json({message : 'Password does not match'})
+                 return
+             }
+ 
+ 
+             let {password, ...user } = result[0]
+ 
+ 
+          
+             const token = jwt.sign({email: email},process.env.AUTHENTICATED_SECRET_KEY_CLIENT, {expiresIn:process.env.TOKEN_EXPIRATION})
+             let decodedToken = jwt.decode(token)
+             const expirationTimeInSeconds = decodedToken.exp;
+             const currentTimeInSeconds = Date.now() / 1000;
+             const tokenExpiration = expirationTimeInSeconds - currentTimeInSeconds;
+             
+             res.status(201).json(encode({user,token,tokenExpiration}))
+ 
+          })
+ 
+      
+ 
+     }
+     catch (err) {
+             res.status(500).json({message:'Internal server error'})
+     }
+ })
+ 
+
 // authentication CRUD
 
 
 router.post('/client/register',  upload.single('profile'),async (req,res, next) => {
+    console.log(req.body)
 
     let { email, password, profile } = req.body
 
@@ -191,7 +246,7 @@ router.delete('/delete-client/:id',async (req,res) => {
 
 
 
-router.get('/client', isAuthenticated, async (req, res) => {
+router.get('/client',  async (req, res) => {
     
     try {
 

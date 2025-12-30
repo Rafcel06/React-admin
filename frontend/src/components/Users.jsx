@@ -260,7 +260,9 @@ const Analytics = () => {
                 </tbody>
 
              </table>
-                  <div className='table-footer'>
+
+                {
+                  !tableData? null : <div className='table-footer'>
                    <div className='pagination-container'>
                     <p>Row per page</p>
                     <select className="form-select" onChange={handlePagination}>
@@ -271,6 +273,8 @@ const Analytics = () => {
                     <p>1 - {limit} of 100</p>
                    </div>
                 </div>
+                }
+                
        
                 <RenderModal element={ submitState.delete ? <MessageAlert method={{cancel:hideModalElement,confirm: deleteRecordUser}}/> :
                   <>

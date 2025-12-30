@@ -1,7 +1,7 @@
 const express = require('express')
 const isAuthenticated = require('./public/gaurd/authGuard')
-const authenticate = require('./public/authentication/authenticate')
-const client = require('./public/client/client')
+const authenticate = require('./public/middleware/authentication/authenticate')
+const client = require('./public/middleware/client/client')
 
 const path = require('path')
 require('dotenv').config()

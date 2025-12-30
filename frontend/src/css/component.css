@@ -259,7 +259,15 @@
 } 
 
 .session-end-contain {
-  margin: 3em 4em;
+   
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    padding: 3em 4em;
+    border-radius: 10px;
+    gap: 1em;
 }
 
 .navigation-links {
@@ -320,7 +328,7 @@
 .home-main-content {
   
     height: 94vh;
-    width: 100%;
+    width: 99%;
     overflow-y: scroll !important;
     padding:1em 2em;
     background: #f9f9f9;
@@ -344,6 +352,7 @@
   border-radius: 50%;
   object-fit: contain;
   background: #fff;
+  padding: 0.2em;
 }
 
 .navigation-icons {

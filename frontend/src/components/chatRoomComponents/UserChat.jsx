@@ -86,20 +86,10 @@ const Chat = () => {
             socket.emit('refresh')
             socket.on('send-message', (data) => {
             renderMessage({message: data.message, profile : data.profile},false)
-  
-            setNotificationCount((prevState) => prevState + 1)
-                if (notificationRef.current) {
-                     notificationRef.current.innerText = notificationCount
-                }
-           })
-
-           socket.on('broadcast-rooms', (rooms) => {
-                console.log(rooms)
-                setRooms(rooms)
            })
 
              return () => {
-                   socket.off('broadcast-rooms')
+
                    socket.off('send-message')
                    socket.disconnect()
   

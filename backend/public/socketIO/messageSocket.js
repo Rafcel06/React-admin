@@ -25,33 +25,7 @@ const createIO = (server) => {
      })
 
 
-     socket.on('create-room', (data) => {
-       socket.join(userId)
-       rooms.push({ id:data.id, profile : data.profile, name : data.name, socketId: userId })
-       socket.broadcast.emit('broadcast-rooms', rooms)
-
-     })
-
-
-     socket.on('refresh', () => {
-            socket.emit('broadcast-rooms', rooms)
-     })
-
-
-
-     socket.on('reconnect', (data) => {
-
-       let index = rooms.findIndex((find) => find.id === data.id)
-
-       if(rooms.length > 0 ) {
-           rooms.splice(index,1)
-           rooms.push({ id:data.id, profile : data.profile, name : data.name, socketId : socket.id })
-           socket.emit('broadcast-rooms', rooms)
-           console.log("reconnect rooms" + rooms)
-       }
-             
-     })
-
+     
    
      socket.on('disconnect', () => {
        console.log(`User ${socket.id} leave the chat`)

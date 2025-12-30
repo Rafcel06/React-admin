@@ -2,11 +2,11 @@ const express = require('express')
 const router = express.Router()
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const db = require('../db/database')
+const db = require('../../db/database')
 const multer = require('multer');
-const isAuthenticated = require('../gaurd/authGuard')
+const isAuthenticated = require('../../gaurd/authGuard')
 const session = require('express-session')
-const { decode, encode} = require('../encodeDecode/encodeDecode');
+const { decode, encode} = require('../../encodeDecode/encodeDecode');
 const fs = require('fs')
 
 
@@ -28,7 +28,7 @@ const fs = require('fs')
     
 router.post('/login', async (req,res) => {
 
-       
+
     const {email, password} = decode(req.body.parsed)
 
     try {
@@ -134,15 +134,20 @@ router.put('/update-profile/:id', isAuthenticated,  upload.single('image') , asy
     let values = []
 
 
+
+
     try {
 
          let sqlCheck = `SELECT image FROM users WHERE id = ?`
          let checkImg = await db.executeQuery(sqlCheck,[id])
-         let splitImg = req.file ?  checkImg[0].image.split('/') : ''
+        
+
+         if(checkImg[0].image != null) {
+           let splitImg = req.file ?  checkImg[0].image.split('/') : ''
 
 
 
-    if(fs.existsSync(`./public/file/${splitImg[splitImg.length - 1]}`)) {
+        if(fs.existsSync(`./public/file/${splitImg[splitImg.length - 1]}`)) {
 
           fs.unlink(`./public/file/${splitImg[splitImg.length - 1]}`, (err) => {
               if(err) {
@@ -150,6 +155,10 @@ router.put('/update-profile/:id', isAuthenticated,  upload.single('image') , asy
               }
            })
        }
+         }
+
+
+        
 
 
 
@@ -272,6 +281,25 @@ router.get('/users', isAuthenticated, async (req, res) => {
         res.status(500).json({message:'Internal server error'})
     }
 })
+
+
+router.get('/users/:id', isAuthenticated, async (req, res) => {
+
+    const id = req.params.id
+    
+    try {
+
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users WHERE id = ?;`
+        let result = await db.executeQuery(sql,[id])
+        
+
+        res.status(200).json({data:result})
+    }
+    catch(err) {
+        res.status(500).json({message:'Internal server error'})
+    }
+})
+
 
 
 
