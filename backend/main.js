@@ -1,7 +1,7 @@
 const express = require('express')
 const isAuthenticated = require('./public/gaurd/authGuard')
 const authenticate = require('./public/middleware/authentication/authenticate')
-const client = require('./public/middleware/client/client')
+
 
 const path = require('path')
 require('dotenv').config()
@@ -17,7 +17,7 @@ app.use(cors())
 const server = http.createServer(app);
 
 app.use('/api/v1', authenticate)
-app.use('/api/v1', client)
+
 
 const io = createIO(server)
 

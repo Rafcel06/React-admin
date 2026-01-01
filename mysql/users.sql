@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 21, 2025 at 07:47 AM
+-- Generation Time: Jan 01, 2026 at 04:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,25 +24,37 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chat_users`
+-- Table structure for table `users`
 --
 
-CREATE TABLE `chat_users` (
+CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `profile` varchar(255) DEFAULT NULL,
+  `isAdmin` tinyint(1) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL
+  `image` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `middle_name` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `isAdmin`, `email`, `image`, `password`, `first_name`, `last_name`, `middle_name`, `phone`) VALUES
+(11, 1, 'admin@gmail.com', 'http://localhost:4000/1767000287764 -- content2.2.png', '$2b$10$U4b/paE6i.bm2GaODkt19O1gmZZy5WKYMm9OmLbUDHhXvS1Ok/pKa', 'Super', 'Admin', '', '123');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `chat_users`
+-- Indexes for table `users`
 --
-ALTER TABLE `chat_users`
-  ADD PRIMARY KEY (`id`),
+ALTER TABLE `users`
+  ADD UNIQUE KEY `id` (`id`),
   ADD UNIQUE KEY `email` (`email`);
 
 --
@@ -50,10 +62,10 @@ ALTER TABLE `chat_users`
 --
 
 --
--- AUTO_INCREMENT for table `chat_users`
+-- AUTO_INCREMENT for table `users`
 --
-ALTER TABLE `chat_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -176,7 +176,7 @@ const Analytics = () => {
           setFileState(file.name)
           let reader = new FileReader(file)
           reader.onload = function(e) {
-      
+              //  console.log(e.target.result)
           }
 
           reader.readAsDataURL(file)
@@ -203,6 +203,8 @@ const Analytics = () => {
        getData(`users/${limit}/${offset}`)
        .then((response) => {
         setTableData(response.data)
+
+        console.log(response)
        })
        .catch((err) => console.log(err))
 

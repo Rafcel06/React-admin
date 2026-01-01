@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 28, 2025 at 06:34 AM
+-- Generation Time: Jan 01, 2026 at 04:14 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -53,7 +53,7 @@ ALTER TABLE `client_message`
 -- AUTO_INCREMENT for table `client_message`
 --
 ALTER TABLE `client_message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
@@ -63,7 +63,7 @@ ALTER TABLE `client_message`
 -- Constraints for table `client_message`
 --
 ALTER TABLE `client_message`
-  ADD CONSTRAINT `client_message_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `chat_users` (`id`);
+  ADD CONSTRAINT `client_message_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

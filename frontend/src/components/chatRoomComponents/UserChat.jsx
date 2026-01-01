@@ -14,7 +14,16 @@ import socket from "../SocketIO/SocktetIO";
 const Chat = () => {
 
   const [chatState,setChatState] = useState(false)
-  const [rooms, setRooms] = useState([])
+  const [rooms, setRooms] = useState([
+    {
+      name :'rafcel',
+      id : 1
+    },
+        {
+      name :'kyle',
+      id : 2
+    }
+  ])
   const [selectedChat, setSelectedChat] = useState(false)
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
@@ -76,14 +85,11 @@ const Chat = () => {
         setChatState(true)
         setNotificationCount(0)
 
-      }
-
-    
+      }    
 
         useEffect(() => {
           
             socket.connect()
-            socket.emit('refresh')
             socket.on('send-message', (data) => {
             renderMessage({message: data.message, profile : data.profile},false)
            })

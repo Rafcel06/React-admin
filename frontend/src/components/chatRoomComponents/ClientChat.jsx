@@ -76,6 +76,21 @@ const ClientChat = () => {
     
     }
 
+
+      const canvaImage = (base64Image,profileName) => {
+         const [meta, data] = base64Image.split(',');
+         const mime = meta.match(/:(.*?);/)[1];
+         const binary = atob(data);
+         const len = binary.length;
+         const bytes = new Uint8Array(len);
+
+        for (let i = 0; i < len; i++) {
+           bytes[i] = binary.charCodeAt(i);
+        }
+
+        return new File([bytes],profileName, { type: mime });
+      }
+
       const submit = (data) => {  
            
         // renderMessage({message: data.message, profile : profileImg},true)
@@ -145,11 +160,12 @@ const ClientChat = () => {
       }
 
 
+
+
       const handleSetClientName = () => {
   
            let userChat = v4()
            let userProfile = generateAvatar('')
-           setProfileImg(userProfile)
 
       }
 

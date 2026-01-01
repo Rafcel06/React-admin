@@ -139,6 +139,7 @@ router.put('/update-profile/:id', isAuthenticated,  upload.single('image') , asy
     try {
 
          let sqlCheck = `SELECT image FROM users WHERE id = ?`
+
          let checkImg = await db.executeQuery(sqlCheck,[id])
         
 
@@ -312,7 +313,7 @@ router.get('/users/:limit/:offset', isAuthenticated, async (req, res) => {
     try {
 
         let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users LIMIT ${limit} OFFSET ${offset};`
-        let result = await db.executeQuery(sql)
+        let result = await db.executeQuery(sql,[limit,offset])
         
 
         res.status(200).json({data:result})

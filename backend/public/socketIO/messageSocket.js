@@ -4,12 +4,13 @@ const { Server, Socket } = require("socket.io")
 const db = require('../db/database')
 const {  v4 } = require('uuid')  
 
+
 const createIO = (server) => {
   const io = new Server(server, {
     cors: { origin: "*" }
   })
 
-    const rooms = []
+
       
 
 
@@ -24,12 +25,11 @@ const createIO = (server) => {
             socket.broadcast.emit('send-message', data)
      })
 
-
-     
    
      socket.on('disconnect', () => {
        console.log(`User ${socket.id} leave the chat`)
      })
+     
 })
 
 
