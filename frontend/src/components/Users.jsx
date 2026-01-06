@@ -27,11 +27,12 @@ const Analytics = () => {
    const [submitState, setSubmitState] = useState({ post : true, edit : false, delete : false })
    const {showAlert, hideAlert, RenderSnackBarSuccess, RenderSnackBarFailed} = useSnackBar()
    const [deleteId,setDeleteId] = useState(null)
+   const [currentMatchDelete,setCurrentMatchDelete] = useState(false)
    const [editId,setEditId] = useState(null)
    const [editState,setEditState] = useState(false)
    const [offset,setOffset] = useState(0)
    const [limit,setLimit] = useState(5)
-   const [firstName,setFirstName] = useState('')
+
 
 
     const addUser = () => {
@@ -58,11 +59,21 @@ const Analytics = () => {
     }
 
     const deleteUser = (data) => {
+         setCurrentMatchDelete(false)
          showModalElement()
          setSubmitState({post:false,edit:false,delete:true}) 
          setDeleteId(data.id)
          setFetchState((prevState) => !prevState)
+
+          const { id } = getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user
+
+          if(id === data.id) {
+               setCurrentMatchDelete(true)
+          }
+
     }
+
+
 
 
     const resetFormField = () => {
@@ -90,9 +101,10 @@ const Analytics = () => {
 
           formData.append('first_name', data.first_name)
           formData.append('last_name', data.last_name)
+          formData.append('isAdmin',1)
           formData.append('email', data.email)
           formData.append('phone', data.phone)
-          formData.append('image', data.image[0])
+          formData.append('image', (data.image ? data.image[0] : ""))
           formData.append('password', data.password)
       
 
@@ -153,8 +165,11 @@ const Analytics = () => {
     }
 
       const deleteRecordUser = () => {
-          let id = deleteId
-          deleteData(`delete-profile/${id}`)
+
+          let selectedId = deleteId
+
+  
+          deleteData(`delete-profile/${selectedId}`)
           .then((response) => { 
              setFetchState()
              setDeleteId(null)
@@ -199,6 +214,8 @@ const Analytics = () => {
 
 
   useEffect(() => {
+
+
 
        getData(`users/${limit}/${offset}`)
        .then((response) => {
@@ -278,7 +295,7 @@ const Analytics = () => {
                 }
                 
        
-                <RenderModal element={ submitState.delete ? <MessageAlert method={{cancel:hideModalElement,confirm: deleteRecordUser}}/> :
+                <RenderModal element={ submitState.delete ? <MessageAlert method={{cancel:hideModalElement,confirm: deleteRecordUser, currentDeleteState : currentMatchDelete}}/> :
                   <>
 
               <h2 className='form-title'>{submitState.post ? 'Add user' : 'Edit user'}</h2>

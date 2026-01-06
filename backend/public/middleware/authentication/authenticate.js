@@ -82,10 +82,11 @@ router.post('/login', async (req,res) => {
 // authentication CRUD
 
 
-router.post('/admin/register', isAuthenticated, upload.single('image'),async (req,res, next) => {
+router.post('/admin/register',  upload.single('image'),async (req,res, next) => {
 
         // let { email, password, first_name, last_name, middle_name, phone } = decode(req.body.parsed)
-    let { email, password, first_name, last_name, middle_name, phone } = req.body
+
+    let { email, password, isAdmin, first_name, last_name, middle_name, phone } = req.body
 
            image = ''
 
@@ -107,8 +108,8 @@ router.post('/admin/register', isAuthenticated, upload.single('image'),async (re
 
 
             const hashed =  await bcryptjs.hash(password, 10)
-            let insertSql = `INSERT INTO users (email, password, first_name,last_name, middle_name, phone,image) VALUES(?, ?, ?, ?, ?, ?, ?)`
-            let insertResult =  await db.insertQuery(insertSql,[email, hashed, first_name, last_name, middle_name, phone, image])
+            let insertSql = `INSERT INTO users (email, password,isAdmin, first_name,last_name, middle_name, phone,image) VALUES(?, ?, ?, ?, ?, ?, ?, ?)`
+            let insertResult =  await db.insertQuery(insertSql,[email, hashed,isAdmin,first_name, last_name, middle_name, phone, image])
 
 
             res.status(200).json({message: 'Account succesfully created', data: insertResult})
