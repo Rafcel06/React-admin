@@ -37,7 +37,7 @@ const useGenerateAvatar = () => {
     );
 
 
-       console.log(canvas.toDataURL("image/png"))
+   
        return canvas.toDataURL("image/png");
   };
 

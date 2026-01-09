@@ -11,7 +11,6 @@ const DeleteData = ({method}) => {
   
   const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
  
-  console.log(method.currentDeleteState)
 
   const cancelRequest = () => {
     method.cancel()

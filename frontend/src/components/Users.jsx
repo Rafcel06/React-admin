@@ -65,6 +65,9 @@ const Analytics = () => {
          setDeleteId(data.id)
          setFetchState((prevState) => !prevState)
 
+
+        //  add this only in user table
+
           const { id } = getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user
 
           if(id === data.id) {
@@ -221,7 +224,6 @@ const Analytics = () => {
        .then((response) => {
         setTableData(response.data)
 
-        console.log(response)
        })
        .catch((err) => console.log(err))
 
@@ -251,9 +253,11 @@ const Analytics = () => {
                 </thead>
                 <tbody>
                   { tableData?.data.length === 0  || !tableData ? <tr className='table-no-content'><td colSpan={7} className='row-no-content'>No records found</td></tr> : null  }
-
+                  
                     {
-                      tableData?.data.map((mapped) => {
+                       
+
+                      tableData?.data.filter((filter) => filter.isAdmin === 1).map((mapped) => {
                         return  tableData?.data?.length ? <tr key={mapped?.id}>
                           <td>{mapped?.id}</td>
                           <td>{mapped?.email}</td>

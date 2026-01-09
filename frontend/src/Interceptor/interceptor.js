@@ -24,6 +24,7 @@ axiosInstance.interceptors.request.use(
   axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => { 
+    console.log(error)
      secureLocalStorage.setItem("ExpiredIn" , "true" )
     if (error.response.status === 401) {
       console.error('Unauthorized access, please log in');

@@ -11,19 +11,12 @@ import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import socket from "../SocketIO/SocktetIO";
 
+
+
 const Chat = () => {
 
   const [chatState,setChatState] = useState(false)
-  const [rooms, setRooms] = useState([
-    {
-      name :'rafcel',
-      id : 1
-    },
-        {
-      name :'kyle',
-      id : 2
-    }
-  ])
+  const [rooms, setRooms] = useState([])
   const [selectedChat, setSelectedChat] = useState(false)
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
@@ -31,12 +24,15 @@ const Chat = () => {
   const notificationRef = useRef(null)
   const [notificationCount,setNotificationCount] = useState(0)
   const [showNotification,setShowNotification] = useState(false)
+
+  
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
+
        setChatInformation(data)
        setSelectedChat(true)
-       console.log(data)
+
   }
 
 
@@ -86,17 +82,26 @@ const Chat = () => {
         setNotificationCount(0)
 
       }    
-
         useEffect(() => {
-          
+
+            
+            
             socket.connect()
+            socket.emit('room','From user')
             socket.on('send-message', (data) => {
             renderMessage({message: data.message, profile : data.profile},false)
+           })
+
+         
+
+           socket.on('show-rooms', (data) => {
+               setRooms(data)
            })
 
              return () => {
 
                    socket.off('send-message')
+                   socket.off('show-rooms')
                    socket.disconnect()
   
                }
@@ -127,11 +132,11 @@ const Chat = () => {
                             
                                  <div className='user-contain' onClick={() => handleShowChat(mapped)} key={index}>
                                       <div className='user-chat-profile'>
-                                        <img src={mapped.profile} alt="" className='chat-user-image'/>
+                                        <img src={mapped.image} alt="" className='chat-user-image'/>
                                         <span className='user-status'></span>
                                       </div>
                                       <div className='user-chat-information'>
-                                      <span className='user-chat-name'>{mapped.name}</span>
+                                      <span className='user-chat-name'>{mapped.first_name}</span>
                                    </div>
                                 </div>
                             ) 
@@ -145,8 +150,8 @@ const Chat = () => {
                         <div className={ selectedChat ? "chat-block-contain" : "chat-block-contain  minimize-chat "}>
                            <div className='user-chat-block-information'>
                                <div className='user-selected-name'>
-                                  <img src={chatInformation.profile} alt="" className='user-chat-profile profile-chat-modify'/>
-                                   <span className='user-chat-name user-chat-modify'>{chatInformation.name}</span>
+                                  <img src={chatInformation.image} alt="" className='user-chat-profile profile-chat-modify'/>
+                                   <span className='user-chat-name user-chat-modify'>{chatInformation.first_name}</span>
                                </div> 
                                <div className='user-selected-option'>
                                    <SearchIcon className="input-icons"/>
@@ -170,11 +175,11 @@ const Chat = () => {
                           rooms.length > 0 ? rooms.map((mapped,index) =>  (
                                  <div className='user-contain' onClick={() => handleShowChat(mapped)} key={index}>
                                       <div className='user-chat-profile'>
-                                        <img src={mapped.profile} alt="" className='chat-user-image'/>
+                                        <img src={mapped.image} alt="" className='chat-user-image'/>
                                         <span className='user-status'></span>
                                       </div>
                                       <div className='user-chat-information'>
-                                      <span className='user-chat-name'>{mapped.name}</span>
+                                      <span className='user-chat-name'>{mapped.first_name}</span>
                                    </div>
                                 </div>
                             )

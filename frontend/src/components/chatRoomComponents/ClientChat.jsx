@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import profile from "../../images/user-logo.png";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { useRef } from "react";
 import socket from "../SocketIO/SocktetIO";
 import useAlert from "../../customHooks/useAlert";
@@ -19,6 +19,9 @@ import useLocalStorage from "../../customHooks/useLocalStorage";
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import useFetch from "../../customHooks/useFetch";
+import useEncryptDecrypt from "../../customHooks/useEncryptDecrypt";
+import axios from "axios";
+
 
 import { v4 } from "uuid" 
 
@@ -27,8 +30,9 @@ const ClientChat = () => {
   const [ userChat,setUserChat] = useState()
   const { generateAvatar} = useGenerateAvatar()
   const { setSecureStorage, getSecureStorage, removeSecureStorage, clearSecureStorge } = useLocalStorage()
-  const { fetchState, setFetchState, getData, postData, postDataNoAuth, updateData, deleteData} = useFetch()
+ 
   const { BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
+   const {setEncode, setDecode} = useEncryptDecrypt()
   const { RenderAlert, showAlertElement, hideAlertElement } = useAlert()
   const { handleSubmit, reset, register ,formState} = useForm();
   const {errors} = formState
@@ -37,14 +41,15 @@ const ClientChat = () => {
   const [profileImg,setProfileImg] = useState()
   const chatBoxRef = useRef(null)
   const [clientState,setClientState] = useState(true)
-  const clientInputRef = (null)
+  const clientInputRef = useRef(null)
   const [clientInputValue,setClientInputValue] = useState()
   const [clientAuthenticationState,setClientAuthenticationState] = useState({
     register : true,
     login : false
   })
+  const [emailExist,setEmailExist] = useState(false)
   const [matchPasswordState,setMatchPasswordState] = useState(false)
-
+  const [adminAccount, setAdminAccount] = useState(false)
 
    const renderMessage = (data,isOwn) => {
 
@@ -88,14 +93,19 @@ const ClientChat = () => {
            bytes[i] = binary.charCodeAt(i);
         }
 
-        return new File([bytes],profileName, { type: mime });
+        return new File([bytes],profileName + ".png", { type: 'image/png' });
       }
 
-      const submit = (data) => {  
-           
-        // renderMessage({message: data.message, profile : profileImg},true)
-        // socket.emit('message',{message: data.message, profile : profileImg},true)
-                 
+   
+
+      const submit = async (data) => { 
+
+         try {
+
+             const profile = await generateAvatar(data.first_name)
+             if(canvaImage(profile,data.first_name)) {
+
+    
                if(data.confirmPassword !== data.password && setClientAuthenticationState.register === true) {
                   setMatchPasswordState(true)
                   return
@@ -109,52 +119,97 @@ const ClientChat = () => {
                     showBackDrop()
 
                 if(clientAuthenticationState.login === true && clientAuthenticationState.register === false) {
-  
-                postDataNoAuth(process.env.REACT_APP_URL + '/client/register',data)
+      
+                axios.post(process.env.REACT_APP_URL + 'login', { parsed :setEncode(data)})
+
                 .then((response) => {
+                    const { user } = setDecode(response.data)
+            
+                    if(user.isAdmin === 1) {
+                        hideBackDrop()
+                        setAdminAccount(true)
+                        return
+                    }
+
                     hideBackDrop()
                     hideAlertElement()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data)
                 })
                 .catch((err) => {
-                  console.log(err)
+           
                    hideBackDrop()
                 })
                   return 
                 }
 
                 if(clientAuthenticationState.login === false && clientAuthenticationState.register === true) {
-                
+                 const clientReg =  {first_name: data.first_name, image:canvaImage(profile,data.first_name), email: data.email, password: data.password, isAdmin: 0}
+
+
+
+                 const form = new FormData()
+
+                       form.append('first_name', clientReg.first_name)
+                       form.append('email', clientReg.email)
+                       form.append('image', clientReg.image)
+                       form.append('password', clientReg.password)
+                       form.append('isAdmin', clientReg.isAdmin)
+  
+  
+
                 showBackDrop()
-                postDataNoAuth(process.env.REACT_APP_URL + 'client/register',data)
+                axios.post(process.env.REACT_APP_URL + 'admin/register',form)
                 .then((response) => {
-                    hideBackDrop()
+              
+                   if(!response) {
+                      setEmailExist(true)
+                      hideBackDrop()
+                      return
+                   }
+
+                    socket.emit('room','From client')
                     hideAlertElement()
-                    setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response)
+                    hideBackDrop()
+                    setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data.data)
+                    setProfileImg(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY).image)
                 })
                 .catch((err) => {
-                  console.log(err)
-                   hideBackDrop()
+    
+                  hideBackDrop()
                 })
                   return 
                 }
+              }
+                }
+
+
+                catch(err) {
+                  console.log(err)
+                }
+              
         
 
       }
 
 
-      const handleSendChat = () => {
+      const handleSendChat = (e) => {
+        
+        e.preventDefault()
 
-        // renderMessage({message: clientChatValue, profile : profileImg},true)
-        // socket.emit('message',{message: clientChatValue, profile : profileImg},true)
+        renderMessage({message: clientInputRef.current.value, profile : profileImg},true)
+        socket.emit('message',{message: clientInputRef.current.value, profile : profileImg},true)
+        clientInputRef.current.value = ''
       }
 
       const handleLoginRegisterState = () => {
-      reset()
+
+        setAdminAccount(false)
+        reset()
         setClientState((prevState) => !prevState)
 
-        if(clientState) {
+        if(!clientState) {
             setClientAuthenticationState({login: false, register: true})
+            return
         }
             setClientAuthenticationState({login: true, register: false})
       }
@@ -162,39 +217,28 @@ const ClientChat = () => {
 
 
 
-      const handleSetClientName = () => {
-  
-           let userChat = v4()
-           let userProfile = generateAvatar('')
 
-      }
+    
 
-
-        useEffect(() => {  
-
-           
+        useEffect(() => {   
+      
             socket.connect()
-
+            socket.emit('room','From client')
             if(!getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)) {
                 showAlertElement()
             }
 
             if(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)) {
               
-                const { id, profile, name } = getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
-                       setProfileImg(profile)
-                const existingData = {
-                  id : id,
-                  profile : profile,
-                  name : name
+                const { image} = getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
+                       setProfileImg(image)
                 }
-     
-            }
 
 
             socket.on('send-message', (data) => {
                  renderMessage({message: data.message, profile : data.profile},false)
             })
+          
 
 
   
@@ -202,6 +246,7 @@ const ClientChat = () => {
                    socket.off('send-message')
                    socket.disconnect()
                }
+
       
             },[])
 
@@ -223,15 +268,16 @@ const ClientChat = () => {
           </div>
         </div>
         <div className="user-chat-block-contain  " ref={chatBoxRef}></div>
-        <form className="chat-form-submit" onSubmit={handleSendChat}>
+        <form className="chat-form-submit" onSubmit={(e) =>handleSendChat(e)}>
           <input
             type="text"
             name=""
             className="admin-send-chat-input client-chat-input"
-            value={clientInputValue}
-            onChange={(e) => setClientInputValue(e.target.value)}
+            ref={clientInputRef}
+            // value={clientInputValue}
+            // onChange={(e) => setClientInputValue(e.target.value)}
           />
-          <button type="submit" className="admin-send-chat-submit">
+          <button type="submit" className="admin-send-chat-submit" >
             <TelegramIcon />
           </button>
         </form>
@@ -243,7 +289,20 @@ const ClientChat = () => {
           <div className="form-container" >
             <p className="title">{clientState ? "Create Account" : "Login Account"}</p>
                  <form className="form" onSubmit={handleSubmit(submit)}>
-
+          
+                  {
+                   clientState ? (
+                  <div className="input-contain-icons">
+                  <input type="text" className="input-text input-with-icons" placeholder="Name" {...register('first_name', {
+                  required : {
+                   value: clientState ? true : false,
+                    message: '*Name is required'
+                  }
+                })} />
+                </div>
+                ) : null
+                  } 
+            <p className="form-errors">{errors.name?.message}</p>
             <div className="input-contain">
                  <input type="email" className="input-text"  placeholder="Email" {...register('email', {
                    required : {
@@ -265,7 +324,11 @@ const ClientChat = () => {
                 })} />
                   { showPassword ?  <VisibilityOffIcon className="input-icons" onClick={() => setPassword(false)}/>  : <RemoveRedEyeIcon className="input-icons"  onClick={() => setPassword(true)} />}
                 </div>
-                <p className="form-errors">{errors.password?.message}</p>
+                <p className="form-errors">{errors.password?.message} 
+                  {adminAccount ? "Client account not exist" : null}
+
+                </p>
+                
               {
                 clientState ? (
                       <div className="input-contain-icons">
@@ -279,7 +342,10 @@ const ClientChat = () => {
                 </div>
                 ) : null
               }
-                <p className="form-errors">{matchPasswordState ? "*Password does not match" : errors.confirmPassword?.message}</p>
+                <p className="form-errors">{matchPasswordState ? "*Password does not match" : errors.confirmPassword?.message}
+                  {emailExist ? "Email is already exist" : null}
+               
+                </p>
                 <p className="page-link"><span className="page-link-label" data-discover="true" onClick={handleLoginRegisterState}>{clientState ? "Create account" : "Login account" }</span></p>
               <button className="form-btn" style={btnStyle} disabled={backDropState}>{backDropState ? <BackDropModal/> : clientState ? "Create account" : "Login account"}</button>
             </form>

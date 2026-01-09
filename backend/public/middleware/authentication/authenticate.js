@@ -90,6 +90,9 @@ router.post('/admin/register',  upload.single('image'),async (req,res, next) => 
 
            image = ''
 
+
+           console.log(req.file)
+
        if(req.file) {
            image = `${req.protocol}://${req.get('host')}/` + req.file.filename
        }
@@ -102,7 +105,7 @@ router.post('/admin/register',  upload.single('image'),async (req,res, next) => 
  
 
        if(result.length > 0) {
-           res.status(200).json({message:'Email is not available'})
+           res.status(401).json({message:'Email is not available'})
            return
        }
 
@@ -112,11 +115,10 @@ router.post('/admin/register',  upload.single('image'),async (req,res, next) => 
             let insertResult =  await db.insertQuery(insertSql,[email, hashed,isAdmin,first_name, last_name, middle_name, phone, image])
 
 
-            res.status(200).json({message: 'Account succesfully created', data: insertResult})
+            res.status(200).json({message: 'Account succesfully created', data:{email: email, first_name: first_name, image: image}})
 
     }
     catch(err) {
-        console.log(err)
         res.status(500).json({message:'Internal server error'})
     }
 })
@@ -269,11 +271,11 @@ router.delete('/delete-profile/:id', isAuthenticated,async (req,res) => {
 
 
 
-router.get('/users', isAuthenticated, async (req, res) => {
+router.get('/users',  async (req, res) => {
     
     try {
 
-        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users;`
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone, isAdmin  FROM users;`
         let result = await db.executeQuery(sql)
         
 
@@ -291,7 +293,7 @@ router.get('/users/:id', isAuthenticated, async (req, res) => {
     
     try {
 
-        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users WHERE id = ?;`
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone, isAdmin FROM users WHERE id = ?;`
         let result = await db.executeQuery(sql,[id])
         
 
@@ -313,7 +315,7 @@ router.get('/users/:limit/:offset', isAuthenticated, async (req, res) => {
     
     try {
 
-        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone  FROM users LIMIT ${limit} OFFSET ${offset};`
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone, isAdmin  FROM users WHERE isAdmin = 1 LIMIT ${limit} OFFSET ${offset};`
         let result = await db.executeQuery(sql,[limit,offset])
         
 
@@ -323,6 +325,24 @@ router.get('/users/:limit/:offset', isAuthenticated, async (req, res) => {
         res.status(500).json({message:'Internal server error'})
     }
 })
+
+
+
+router.get('/client', isAuthenticated, async (req, res) => {
+    
+    try {
+
+        let sql =  `SELECT  id,email, first_name,last_name, middle_name, phone, isAdmin  FROM users WHERE isAdmin = 0`
+        let result = await db.executeQuery(sql)
+        
+
+        res.status(200).json({data:result})
+    }
+    catch(err) {
+        res.status(500).json({message:'Internal server error'})
+    }
+})
+
 
 
 

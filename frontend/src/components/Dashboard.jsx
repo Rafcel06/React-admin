@@ -64,9 +64,10 @@ const dougData = {
 };
 
  useEffect(() => {
-     getData('users')
+     getData('client')
      .then((response) => {
         setUsers(response)
+     
      })
      .catch((error) => console.log(error))
  },[fetchState])

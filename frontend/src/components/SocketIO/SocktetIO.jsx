@@ -1,17 +1,20 @@
-import React from 'react'
-import { useState } from 'react'
-import { useEffect } from 'react'
 import io from "socket.io-client"
-import { v4} from "uuid";
+import { v4 } from "uuid";
 
 // const Socket = () => {
 
 
-   let uuid = v4()
+   const createUUID = () => {
+
+       if(!localStorage.getItem('socketUUID')) {
+           localStorage.setItem('socketUUID', v4())
+       }  
+       return  localStorage.getItem('socketUUID')
+   }
  
-   const socket = io(process.env.REACT_APP_BACKEND_URL, {
+   const socket = io('http://localhost:4000', {
     autoConnect: false,
-    query: { userId: uuid }
+    query: { userId:createUUID()}
    })
 
 
