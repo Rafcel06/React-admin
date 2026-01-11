@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 01, 2026 at 04:15 PM
+-- Generation Time: Jan 11, 2026 at 01:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
+  `user_uuid` varchar(255) DEFAULT NULL,
   `isAdmin` tinyint(1) DEFAULT NULL,
   `email` varchar(255) DEFAULT NULL,
   `image` varchar(255) DEFAULT NULL,
@@ -43,8 +44,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `isAdmin`, `email`, `image`, `password`, `first_name`, `last_name`, `middle_name`, `phone`) VALUES
-(11, 1, 'admin@gmail.com', 'http://localhost:4000/1767000287764 -- content2.2.png', '$2b$10$U4b/paE6i.bm2GaODkt19O1gmZZy5WKYMm9OmLbUDHhXvS1Ok/pKa', 'Super', 'Admin', '', '123');
+INSERT INTO `users` (`id`, `user_uuid`, `isAdmin`, `email`, `image`, `password`, `first_name`, `last_name`, `middle_name`, `phone`) VALUES
+(58, NULL, 1, 'admin@gmail.com', '', '$2b$10$zHpCqWGESPVeM5rEGhSL9OERV.qy2actk8kNNLP3XWbf8lSB6B3E2', 'Super', 'Admin', NULL, '123'),
+(59, NULL, 1, 'rafcel@gmail.com', '', '$2b$10$XXSSSm4rFKZud8.Hss6yv.mouL1O4Io8iVQBYoQrm1jnqcEfXk8ZS', 'Rafcel', 'Teberio', NULL, '123'),
+(88, NULL, 0, 'raf@gmail.com', 'http://localhost:4000/1767968282151 -- Rafcel.png', '$2b$10$W0bk03x.sqi5g/RypqlMhuz/z6.IBJHd8eZz2dP/d51I5FFZTgZga', 'Rafcel', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -65,7 +68,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

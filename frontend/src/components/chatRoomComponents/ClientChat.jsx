@@ -143,7 +143,7 @@ const ClientChat = () => {
                 }
 
                 if(clientAuthenticationState.login === false && clientAuthenticationState.register === true) {
-                 const clientReg =  {first_name: data.first_name, image:canvaImage(profile,data.first_name), email: data.email, password: data.password, isAdmin: 0}
+                 const clientReg =  {first_name: data.first_name, image:canvaImage(profile,data.first_name), email: data.email, password: data.password, isAdmin: 0, user_uuid: localStorage.getItem('socketUUID')}
 
 
 
@@ -151,11 +151,11 @@ const ClientChat = () => {
 
                        form.append('first_name', clientReg.first_name)
                        form.append('email', clientReg.email)
-                       form.append('image', clientReg.image)
+                       form.append('image', clientReg.image)  
                        form.append('password', clientReg.password)
                        form.append('isAdmin', clientReg.isAdmin)
-  
-  
+                       form.append('user_uuid', clientReg.user_uuid)
+    
 
                 showBackDrop()
                 axios.post(process.env.REACT_APP_URL + 'admin/register',form)
@@ -188,7 +188,6 @@ const ClientChat = () => {
                 }
               
         
-
       }
 
 
@@ -197,7 +196,7 @@ const ClientChat = () => {
         e.preventDefault()
 
         renderMessage({message: clientInputRef.current.value, profile : profileImg},true)
-        socket.emit('message',{message: clientInputRef.current.value, profile : profileImg},true)
+        socket.emit('message',{message: clientInputRef.current.value, profile : profileImg, client: localStorage.getItem('socketUUID')},true)
         clientInputRef.current.value = ''
       }
 

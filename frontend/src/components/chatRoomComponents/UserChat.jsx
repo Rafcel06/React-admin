@@ -10,6 +10,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import socket from "../SocketIO/SocktetIO";
+import { FunctionCallingConfigMode } from '@google/genai';
 
 
 
@@ -29,7 +30,8 @@ const Chat = () => {
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
-
+        console.log(data)
+       resetChatField()
        setChatInformation(data)
        setSelectedChat(true)
 
@@ -69,10 +71,21 @@ const Chat = () => {
       }
      
 
+      const resetChatField = () => {
+          const message_chat_admin = document.querySelectorAll('.admin-chat-flexing-contain')
+          const message_chat_client = document.querySelectorAll('.admin-chat-flexing-client-contain')
+
+          message_chat_admin.forEach((each) => chatBoxRef.current.removeChild(each))
+          message_chat_client.forEach((each) => chatBoxRef.current.removeChild(each))
+      }
+
+
+
+
       const  submit = (data) => {
         reset()
         renderMessage({message: data.message, profile : profile},true)
-        socket.emit('message',{message: data.message, profile :profile,to: chatInformation.id }, true)
+        socket.emit('message',{message: data.message, profile :profile,to: chatInformation.user_uuid }, true)
         
       }
 
@@ -84,12 +97,26 @@ const Chat = () => {
       }    
         useEffect(() => {
 
-            
+              console.log(chatInformation)
             
             socket.connect()
             socket.emit('room','From user')
             socket.on('send-message', (data) => {
+
             renderMessage({message: data.message, profile : data.profile},false)
+           })
+
+
+           socket.on('send-message-to-admins', (data) => {
+           
+                        if(chatInformation.user_uuid != data.client) {
+                      //     console.log('client ' + data.client)
+                      //     console.log('selected ' + chatInformation.user_uuid)
+                      //  console.log('not !!!!!!!!!!!!!!!') 
+                      return
+                  }
+
+             renderMessage({message: data.message, profile : data.profile},false)
            })
 
          
@@ -101,12 +128,13 @@ const Chat = () => {
              return () => {
 
                    socket.off('send-message')
+                   socket.off('send-message-to-admins')
                    socket.off('show-rooms')
                    socket.disconnect()
   
                }
 
-      },[])
+      },[chatInformation])
 
 
 
