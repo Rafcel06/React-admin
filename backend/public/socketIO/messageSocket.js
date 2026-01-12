@@ -80,11 +80,11 @@ const createIO = (server) => {
      })
 
 
-      socket.on('create-client-room',  async (data) => {
+      socket.on('create-room-client',  async (data) => {
       try {
         let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
         let results =  await db.executeQuery(sql)
-        socket.emit('show-rooms',results)
+        socket.broadcast.emit('show-rooms',results)
       }
       catch(err) {
        console.log(err)

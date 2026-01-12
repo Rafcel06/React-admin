@@ -106,7 +106,6 @@ const Chat = () => {
 
 
            socket.on('send-message-to-admins', (data) => {
-                        
               if(chatInformation.user_uuid != data.client) {
                       return
                   }
@@ -120,7 +119,6 @@ const Chat = () => {
          
 
            socket.on('show-rooms', (data) => {
-                console.log('hello from admin')
                setRooms(data)
            })
 
@@ -200,7 +198,7 @@ const Chat = () => {
                     
                            {
                           rooms.length > 0 ? rooms.map((mapped,index) =>  (
-                                 <div className='user-contain' onClick={() => handleShowChat(mapped)} key={index}>
+                                 <div className='user-contain  flexing-mobile' onClick={() => handleShowChat(mapped)} key={index}>
                                       <div className='user-chat-profile'>
                                         <img src={mapped.image} alt="" className='chat-user-image'/>
                                         <span className='user-status'></span>

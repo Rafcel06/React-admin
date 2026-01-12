@@ -172,7 +172,7 @@ const ClientChat = () => {
                       hideBackDrop()
                       return
                    }
-
+                    socket.emit('create-room-client','created room')
                     setAccountCreated(true)
                     hideAlertElement()
                     hideBackDrop()
@@ -226,10 +226,6 @@ const ClientChat = () => {
             setClientAuthenticationState({login: true, register: false})
       }
 
-
-
-
-
     
 
         useEffect(() => {   
@@ -243,9 +239,8 @@ const ClientChat = () => {
             if(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)) {
               
                 const { image} = getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
-                       setProfileImg(image)
+                   setProfileImg(image)
                 }
-
 
             socket.on('send-message', (data) => {
                  renderMessage({message: data.message, profile : data.profile},false)
