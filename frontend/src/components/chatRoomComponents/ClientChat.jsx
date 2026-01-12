@@ -21,8 +21,7 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import useFetch from "../../customHooks/useFetch";
 import useEncryptDecrypt from "../../customHooks/useEncryptDecrypt";
 import axios from "axios";
-
-
+import moment from 'moment';
 import { v4 } from "uuid" 
 
 const ClientChat = () => {
@@ -47,9 +46,11 @@ const ClientChat = () => {
     register : true,
     login : false
   })
+  const [serverMessage,setServerMessage] = useState("")
   const [emailExist,setEmailExist] = useState(false)
   const [matchPasswordState,setMatchPasswordState] = useState(false)
   const [adminAccount, setAdminAccount] = useState(false)
+  const [accountCreated,setAccountCreated] = useState(false)
 
    const renderMessage = (data,isOwn) => {
 
@@ -100,11 +101,12 @@ const ClientChat = () => {
 
       const submit = async (data) => { 
 
+
          try {
 
-             const profile = await generateAvatar(data.first_name)
+           
              if(canvaImage(profile,data.first_name)) {
-
+                    const profile = await generateAvatar(data.first_name)
     
                if(data.confirmPassword !== data.password && setClientAuthenticationState.register === true) {
                   setMatchPasswordState(true)
@@ -124,16 +126,20 @@ const ClientChat = () => {
 
                 .then((response) => {
                     const { user } = setDecode(response.data)
-            
+              
                     if(user.isAdmin === 1) {
                         hideBackDrop()
                         setAdminAccount(true)
                         return
                     }
-
+                    
+                 
+                    setProfileImg(user.image)
+                    socket.emit('update-uuid', {uuid : localStorage.getItem('socketUUID'), id : user.id})
                     hideBackDrop()
                     hideAlertElement()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data)
+                  
                 })
                 .catch((err) => {
            
@@ -160,21 +166,23 @@ const ClientChat = () => {
                 showBackDrop()
                 axios.post(process.env.REACT_APP_URL + 'admin/register',form)
                 .then((response) => {
-              
+                 
                    if(!response) {
                       setEmailExist(true)
                       hideBackDrop()
                       return
                    }
 
-                    socket.emit('room','From client')
+                    setAccountCreated(true)
                     hideAlertElement()
                     hideBackDrop()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data.data)
                     setProfileImg(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY).image)
                 })
                 .catch((err) => {
-    
+                  setEmailExist(true)
+                  setServerMessage(err.response.data.message)
+           
                   hideBackDrop()
                 })
                   return 
@@ -192,11 +200,16 @@ const ClientChat = () => {
 
 
       const handleSendChat = (e) => {
-        
         e.preventDefault()
+        if(!clientInputRef.current.value) {
+            return
+        }
+        
+  
+        const user =  getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
 
-        renderMessage({message: clientInputRef.current.value, profile : profileImg},true)
-        socket.emit('message',{message: clientInputRef.current.value, profile : profileImg, client: localStorage.getItem('socketUUID')},true)
+         renderMessage({message: clientInputRef.current.value, profile : user.image},true)
+        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, client: localStorage.getItem('socketUUID')},true)
         clientInputRef.current.value = ''
       }
 
@@ -263,7 +276,7 @@ const ClientChat = () => {
             </span>
           </div>
           <div className="user-selected-option">
-            <SearchIcon className="input-icons" />
+            <SearchIcon className="input-icons"/>
           </div>
         </div>
         <div className="user-chat-block-contain  " ref={chatBoxRef}></div>
@@ -342,8 +355,7 @@ const ClientChat = () => {
                 ) : null
               }
                 <p className="form-errors">{matchPasswordState ? "*Password does not match" : errors.confirmPassword?.message}
-                  {emailExist ? "Email is already exist" : null}
-               
+                  {emailExist ? serverMessage : null}
                 </p>
                 <p className="page-link"><span className="page-link-label" data-discover="true" onClick={handleLoginRegisterState}>{clientState ? "Create account" : "Login account" }</span></p>
               <button className="form-btn" style={btnStyle} disabled={backDropState}>{backDropState ? <BackDropModal/> : clientState ? "Create account" : "Login account"}</button>

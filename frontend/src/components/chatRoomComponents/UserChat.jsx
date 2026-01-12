@@ -10,9 +10,6 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import socket from "../SocketIO/SocktetIO";
-import { FunctionCallingConfigMode } from '@google/genai';
-
-
 
 const Chat = () => {
 
@@ -30,8 +27,7 @@ const Chat = () => {
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
-        console.log(data)
-       resetChatField()
+       resetChatField(data)
        setChatInformation(data)
        setSelectedChat(true)
 
@@ -71,7 +67,12 @@ const Chat = () => {
       }
      
 
-      const resetChatField = () => {
+      const resetChatField = (data) => {
+   
+         if(data.user_uuid === chatInformation.user_uuid) {
+                 return
+         }
+
           const message_chat_admin = document.querySelectorAll('.admin-chat-flexing-contain')
           const message_chat_client = document.querySelectorAll('.admin-chat-flexing-client-contain')
 
@@ -94,34 +95,32 @@ const Chat = () => {
         setChatState(true)
         setNotificationCount(0)
 
-      }    
-        useEffect(() => {
-
-              console.log(chatInformation)
-            
+      }     
+        useEffect(() => {            
             socket.connect()
             socket.emit('room','From user')
             socket.on('send-message', (data) => {
-
+       
             renderMessage({message: data.message, profile : data.profile},false)
            })
 
 
            socket.on('send-message-to-admins', (data) => {
-           
-                        if(chatInformation.user_uuid != data.client) {
-                      //     console.log('client ' + data.client)
-                      //     console.log('selected ' + chatInformation.user_uuid)
-                      //  console.log('not !!!!!!!!!!!!!!!') 
+                        
+              if(chatInformation.user_uuid != data.client) {
                       return
                   }
 
+ 
              renderMessage({message: data.message, profile : data.profile},false)
            })
+
+
 
          
 
            socket.on('show-rooms', (data) => {
+                console.log('hello from admin')
                setRooms(data)
            })
 
@@ -148,7 +147,7 @@ const Chat = () => {
                  <div className='chat-person-list'>
                      <div className="input-contain-icons">
     
-                                <SearchIcon className="input-icons-left"/>
+                                <SearchIcon className="input-icons-left" />
                                 <input type='text' className="input-text input-with-icons" placeholder="Search" />
                   
          

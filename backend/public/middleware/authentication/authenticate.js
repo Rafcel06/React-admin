@@ -90,11 +90,10 @@ router.post('/admin/register',  upload.single('image'),async (req,res, next) => 
 
            image = ''
 
-
-       if(req.file) {
+        if(req.file) {
            image = `${req.protocol}://${req.get('host')}/` + req.file.filename
        }
-           
+          
     
     try { 
     
@@ -107,17 +106,18 @@ router.post('/admin/register',  upload.single('image'),async (req,res, next) => 
            return
        }
 
+       
+
 
             const hashed =  await bcryptjs.hash(password, 10)
             let insertSql = `INSERT INTO users (email, password,isAdmin, first_name,last_name, middle_name, phone,image, user_uuid) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`
             let insertResult =  await db.insertQuery(insertSql,[email, hashed,isAdmin,first_name, last_name, middle_name, phone, image,user_uuid])
 
-
-            res.status(200).json({message: 'Account succesfully created', data:{email, first_name, image, user_uuid}})
+            res.status(200).json({message: 'Account succesfully created', data:{id: insertResult.id,email, first_name, image, user_uuid}})
 
     }
     catch(err) {
-   
+        console.log(err)
         res.status(500).json({message:'Internal server error'})
     }
 })
