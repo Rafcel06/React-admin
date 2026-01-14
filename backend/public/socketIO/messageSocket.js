@@ -11,9 +11,7 @@ const createIO = (server) => {
   })
 
 
-      
-
-
+    
     io.on('connection', (socket) => {
         
      const userId =  socket.handshake.query.userId
@@ -23,11 +21,17 @@ const createIO = (server) => {
      console.log(socket.userId + " Join the chat")
 
      socket.join(socket.userId)
+
      socket.on('message',  async (data) => {   
 
             if(!data.to) {
+                      console.log("from client " + data.message)
+                      console.log("from client " + data.dt_message)
+                      console.log("from client " + data.images)
+                      console.log("from client " + data.user_id)
+                      console.log("from client " + data.client)
                       const {message,dt_message,images,user_id,client}  = data
-    
+     
                try {
                     //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id) VALUES(?, ?, ?, ?)"
                     //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id])
@@ -44,7 +48,12 @@ const createIO = (server) => {
            
 
                try {
-                   console.log("to client " + data.message)
+                   
+                      console.log("to client " + data.message)
+                      console.log("to client " + data.dt_message)
+                      console.log("to client " + data.images)
+                      console.log("to client " + data.user_id)
+                      console.log("to client " + data.client)
                     //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id) VALUES(?, ?, ?, ?, ?)"
                     //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,reciever_id])
                       socket.to(data.to).emit('send-message', data)
@@ -58,6 +67,7 @@ const createIO = (server) => {
 
 
      socket.on('update-uuid',async (data) => {
+
           try {
               let sql = 'UPDATE users SET user_uuid = ? WHERE id = ? '
               let result = await db.executeQuery(sql,[data.uuid, data.id])
@@ -77,7 +87,8 @@ const createIO = (server) => {
 
 
     socket.on('room',  async (data) => {
-       console.log('room socket')
+
+
       try {
         let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
         let results =  await db.executeQuery(sql)
@@ -93,7 +104,8 @@ const createIO = (server) => {
 
 
       socket.on('create-room-client',  async (data) => {
-         console.log('craete socket')
+
+
       try {
         let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
         let results =  await db.executeQuery(sql)

@@ -46,11 +46,12 @@ const ClientChat = () => {
     register : true,
     login : false
   })
+  
   const [serverMessage,setServerMessage] = useState("")
   const [emailExist,setEmailExist] = useState(false)
   const [matchPasswordState,setMatchPasswordState] = useState(false)
   const [adminAccount, setAdminAccount] = useState(false)
-  const [accountCreated,setAccountCreated] = useState(false)
+  const [isLogged,setIsLogged] = useState(false)
 
    const renderMessage = (data,isOwn) => {
 
@@ -138,8 +139,7 @@ const ClientChat = () => {
                     hideAlertElement()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,user)
                     setProfileImg(user.image)
-                    window.location.reload()
-                 
+                    window.location.reload()  
                   
                 })
                 .catch((err) => {
@@ -180,7 +180,7 @@ const ClientChat = () => {
                       return
                    }
                     socket.emit('create-room-client','created room')
-                    setAccountCreated(true)
+ 
                     hideAlertElement()
                     hideBackDrop()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data.data)
@@ -263,7 +263,7 @@ const ClientChat = () => {
                }
 
       
-            },[])
+            },[isLogged])
 
   return (
     <>

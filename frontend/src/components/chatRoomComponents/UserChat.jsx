@@ -22,7 +22,7 @@ const Chat = () => {
   const notificationRef = useRef(null)
   const [notificationCount,setNotificationCount] = useState(0)
   const [showNotification,setShowNotification] = useState(false)
-
+  const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
   
   const chatBoxRef = useRef(null)
 
@@ -86,8 +86,9 @@ const Chat = () => {
 
       const  submit = (data) => {
         reset()
-        renderMessage({message: data.message, profile : profile},true)
-        socket.emit('message',{message: data.message, profile :profile,to: chatInformation.user_uuid, receiver_id : chatInformation.id }, true)
+        renderMessage({message: data.message, profile : adminProfile},true)
+        socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid, receiver_id : chatInformation.id }, true)
+      
       }
 
 
