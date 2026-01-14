@@ -5,16 +5,19 @@ import { useState } from "react"
 import { useEffect } from 'react';
 import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded';
 import SearchIcon from '@mui/icons-material/Search';
-import profile from "../../images/user-logo.png"
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import socket from "../SocketIO/SocktetIO";
+import moment from 'moment';
+import useLocalStorage from '../../customHooks/useLocalStorage';
+
 
 const Chat = () => {
 
   const [chatState,setChatState] = useState(false)
   const [rooms, setRooms] = useState([])
+  const { getSecureStorage, setSecureStorage, removeSecureStorage,clearSecureStorge } = useLocalStorage()
   const [selectedChat, setSelectedChat] = useState(false)
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
@@ -23,11 +26,11 @@ const Chat = () => {
   const [notificationCount,setNotificationCount] = useState(0)
   const [showNotification,setShowNotification] = useState(false)
   const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
+
   
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
-    console.log(data)
        resetChatField(data)
        setChatInformation(data)
        setSelectedChat(true)
@@ -85,9 +88,11 @@ const Chat = () => {
 
 
       const  submit = (data) => {
+      
+        let date = new Date()
         reset()
         renderMessage({message: data.message, profile : adminProfile},true)
-        socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid, receiver_id : chatInformation.id }, true)
+        socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid,  receiver_id : chatInformation.id,dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'), user_id: getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id }, true)
       
       }
 
@@ -115,6 +120,7 @@ const Chat = () => {
            socket.on('show-rooms', (data) => {
                setRooms(data)
            })
+            console.log(getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id)
 
              return () => {
 
@@ -124,6 +130,7 @@ const Chat = () => {
                    socket.disconnect()
   
                }
+              
 
       },[chatInformation])
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 01, 2026 at 04:14 PM
+-- Generation Time: Jan 14, 2026 at 04:39 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,10 +29,21 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `client_message` (
   `id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `message` varchar(255) DEFAULT NULL,
+  `dt_message` datetime DEFAULT NULL,
   `images` varchar(255) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL
+  `user_id` int(11) DEFAULT NULL,
+  `reciever_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `client_message`
+--
+
+INSERT INTO `client_message` (`id`, `name`, `message`, `dt_message`, `images`, `user_id`, `reciever_id`) VALUES
+(9, NULL, 'hello', '2008-11-11 13:23:44', NULL, 58, NULL),
+(18, NULL, 'from admin message', NULL, NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -53,7 +64,7 @@ ALTER TABLE `client_message`
 -- AUTO_INCREMENT for table `client_message`
 --
 ALTER TABLE `client_message`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- Constraints for dumped tables

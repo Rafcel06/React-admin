@@ -29,13 +29,13 @@ const createIO = (server) => {
                       console.log("from client " + data.dt_message)
                       console.log("from client " + data.images)
                       console.log("from client " + data.user_id)
-                      console.log("from client " + data.client)
-                      const {message,dt_message,images,user_id,client}  = data
+                      console.log("from client " + data.receiver_id)
+                      const {message,dt_message,images,user_id,receiver_id}  = data
      
                try {
-                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id) VALUES(?, ?, ?, ?)"
-                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id])
-                     socket.broadcast.emit('send-message-to-admins', data)
+                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id,receiver_id) VALUES(?, ?, ?, ?, ?)"
+                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,receiver_id])
+                    //  socket.broadcast.emit('send-message-to-admins', data)
                   }
               catch(err) {
                  console.log(err)
@@ -43,20 +43,19 @@ const createIO = (server) => {
                 return
             }     
 
-             const {message,dt_message,images,user_id,reciever_id}  = data
+             const {message,dt_message,images,user_id,receiver_id}  = data
              
-           
-
-               try {
-                   
-                      console.log("to client " + data.message)
+                     console.log("to client " + data.message)
                       console.log("to client " + data.dt_message)
                       console.log("to client " + data.images)
                       console.log("to client " + data.user_id)
-                      console.log("to client " + data.client)
-                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id) VALUES(?, ?, ?, ?, ?)"
-                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,reciever_id])
-                      socket.to(data.to).emit('send-message', data)
+                      console.log("to client " + data.receiver_id)
+
+               try {
+
+                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id,receiver) VALUES(?, ?, ?, ?, ?)"
+                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,receiver_id])
+                    //  socket.to(data.to).emit('send-message', data)
                   }
               catch(err) {
                  console.log(err)

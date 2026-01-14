@@ -218,7 +218,7 @@ const ClientChat = () => {
         const user =  getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
         const date = new Date()
          renderMessage({message: clientInputRef.current.value, profile : user.image},true)
-        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss')},true)
+        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, image : null,client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss')},true)
         clientInputRef.current.value = ''
       }
 
