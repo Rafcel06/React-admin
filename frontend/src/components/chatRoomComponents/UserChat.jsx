@@ -27,6 +27,7 @@ const Chat = () => {
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {
+    console.log(data)
        resetChatField(data)
        setChatInformation(data)
        setSelectedChat(true)
@@ -86,8 +87,7 @@ const Chat = () => {
       const  submit = (data) => {
         reset()
         renderMessage({message: data.message, profile : profile},true)
-        socket.emit('message',{message: data.message, profile :profile,to: chatInformation.user_uuid }, true)
-        
+        socket.emit('message',{message: data.message, profile :profile,to: chatInformation.user_uuid, receiver_id : chatInformation.id }, true)
       }
 
 
@@ -100,7 +100,6 @@ const Chat = () => {
             socket.connect()
             socket.emit('room','From user')
             socket.on('send-message', (data) => {
-       
             renderMessage({message: data.message, profile : data.profile},false)
            })
 
@@ -108,15 +107,9 @@ const Chat = () => {
            socket.on('send-message-to-admins', (data) => {
               if(chatInformation.user_uuid != data.client) {
                       return
-                  }
-
- 
+                }
              renderMessage({message: data.message, profile : data.profile},false)
            })
-
-
-
-         
 
            socket.on('show-rooms', (data) => {
                setRooms(data)
@@ -132,6 +125,8 @@ const Chat = () => {
                }
 
       },[chatInformation])
+
+
 
 
 

@@ -26,10 +26,11 @@ const createIO = (server) => {
      socket.on('message',  async (data) => {   
 
             if(!data.to) {
-                      const {message,dt_message,images,user_id,user_uuid}  = data
+                      const {message,dt_message,images,user_id,client}  = data
+    
                try {
-                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id,user_uuid) VALUES(?, ?, ?, ?, ?)"
-                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,user_uuid])
+                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id) VALUES(?, ?, ?, ?)"
+                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id])
                      socket.broadcast.emit('send-message-to-admins', data)
                   }
               catch(err) {
@@ -38,12 +39,14 @@ const createIO = (server) => {
                 return
             }     
 
-             const {message,dt_message,images,user_id,user_uuid}  = data
+             const {message,dt_message,images,user_id,reciever_id}  = data
+             
+           
 
                try {
                    console.log("to client " + data.message)
-                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id,user_uuid) VALUES(?, ?, ?, ?, ?)"
-                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,user_uuid])
+                    //  let sql =  "INSERT INTO client_message(message,dt_message,images,user_id) VALUES(?, ?, ?, ?, ?)"
+                    //  let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,reciever_id])
                       socket.to(data.to).emit('send-message', data)
                   }
               catch(err) {
@@ -58,6 +61,13 @@ const createIO = (server) => {
           try {
               let sql = 'UPDATE users SET user_uuid = ? WHERE id = ? '
               let result = await db.executeQuery(sql,[data.uuid, data.id])
+
+              if(result) {
+                   let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
+                   let results =  await db.executeQuery(sql)
+                   console.log(results)
+                   socket.emit('show-rooms','data is being updated')
+              }
           }
 
           catch(err) {
@@ -66,9 +76,8 @@ const createIO = (server) => {
      })
 
 
-
-
     socket.on('room',  async (data) => {
+       console.log('room socket')
       try {
         let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
         let results =  await db.executeQuery(sql)
@@ -80,7 +89,11 @@ const createIO = (server) => {
      })
 
 
+
+
+
       socket.on('create-room-client',  async (data) => {
+         console.log('craete socket')
       try {
         let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
         let results =  await db.executeQuery(sql)

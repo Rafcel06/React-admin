@@ -104,10 +104,7 @@ const ClientChat = () => {
 
          try {
 
-           
-             if(canvaImage(profile,data.first_name)) {
-                    const profile = await generateAvatar(data.first_name)
-    
+   
                if(data.confirmPassword !== data.password && setClientAuthenticationState.register === true) {
                   setMatchPasswordState(true)
                   return
@@ -119,26 +116,30 @@ const ClientChat = () => {
                }
 
                     showBackDrop()
-
+             
+   
                 if(clientAuthenticationState.login === true && clientAuthenticationState.register === false) {
       
                 axios.post(process.env.REACT_APP_URL + 'login', { parsed :setEncode(data)})
 
                 .then((response) => {
+            
                     const { user } = setDecode(response.data)
               
                     if(user.isAdmin === 1) {
-                        hideBackDrop()
+                        hideBackDrop()  
                         setAdminAccount(true)
                         return
                     }
-                    
-                 
-                    setProfileImg(user.image)
-                    socket.emit('update-uuid', {uuid : localStorage.getItem('socketUUID'), id : user.id})
+ 
+                    socket.emit('update-uuid', {uuid : user.user_uuid, id : user.id})
+                    localStorage.setItem('socketUUID', user.user_uuid)
                     hideBackDrop()
                     hideAlertElement()
-                    setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data)
+                    setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,user)
+                    setProfileImg(user.image)
+                    window.location.reload()
+                 
                   
                 })
                 .catch((err) => {
@@ -148,11 +149,16 @@ const ClientChat = () => {
                   return 
                 }
 
+                if(canvaImage(profile,data.first_name)) {
+                  
+                        const profile = await generateAvatar(data.first_name)
+           
+
                 if(clientAuthenticationState.login === false && clientAuthenticationState.register === true) {
                  const clientReg =  {first_name: data.first_name, image:canvaImage(profile,data.first_name), email: data.email, password: data.password, isAdmin: 0, user_uuid: localStorage.getItem('socketUUID')}
 
-
-
+                    
+      
                  const form = new FormData()
 
                        form.append('first_name', clientReg.first_name)
@@ -164,6 +170,7 @@ const ClientChat = () => {
     
 
                 showBackDrop()
+        
                 axios.post(process.env.REACT_APP_URL + 'admin/register',form)
                 .then((response) => {
                  
@@ -199,6 +206,8 @@ const ClientChat = () => {
       }
 
 
+
+
       const handleSendChat = (e) => {
         e.preventDefault()
         if(!clientInputRef.current.value) {
@@ -207,9 +216,9 @@ const ClientChat = () => {
         
   
         const user =  getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
-
+        const date = new Date()
          renderMessage({message: clientInputRef.current.value, profile : user.image},true)
-        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, client: localStorage.getItem('socketUUID')},true)
+        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss')},true)
         clientInputRef.current.value = ''
       }
 
@@ -237,9 +246,8 @@ const ClientChat = () => {
             }
 
             if(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)) {
-              
-                const { image} = getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
-                   setProfileImg(image)
+                const user = getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
+                setProfileImg(user.image)
                 }
 
             socket.on('send-message', (data) => {
