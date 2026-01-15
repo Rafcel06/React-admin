@@ -54,6 +54,15 @@ const ClientChat = () => {
   const [adminAccount, setAdminAccount] = useState(false)
   const [isLogged,setIsLogged] = useState(false)
 
+
+
+  //   const handleHistoryChat  = (data) => {
+  //   console.log(data)
+  //       data.forEach((each) => {
+  //          renderMessage(each,each.isAdmin === 0 ? true : false)
+  //       })
+  // }
+
    const renderMessage = (data,isOwn) => {
 
         const user_flexing_contain = document.createElement('div')
@@ -265,6 +274,27 @@ const ClientChat = () => {
 
       
             },[isLogged])
+
+
+
+                  useEffect(() => {
+               socket.connect()
+                       socket.emit('history-chat',{room : localStorage.getItem('socketUUID')})
+               socket.on('get-chat-history', (data) => {
+      
+                data.forEach((each) => {
+                  renderMessage(each,each.isAdmin === 0 ? true : false)
+        })
+          })
+
+ 
+
+              return () => {
+                   socket.off('get-chat-history')
+                   socket.disconnect()
+  
+               }
+      },[])
 
   return (
     <>

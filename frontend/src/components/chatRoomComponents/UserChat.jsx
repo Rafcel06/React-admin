@@ -26,7 +26,7 @@ const Chat = () => {
   const [notificationCount,setNotificationCount] = useState(0)
   const [showNotification,setShowNotification] = useState(false)
   const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
-
+  const [chatHistory,setChatHistory] = useState([])
   
   const chatBoxRef = useRef(null)
 
@@ -35,7 +35,15 @@ const Chat = () => {
        setChatInformation(data)
        setSelectedChat(true)
        socket.emit('history-chat',{ room : data.user_uuid})
+        
+  }
 
+
+  const handleHistoryChat  = (data) => {
+
+        data.forEach((each) => {
+           renderMessage(each,each.isAdmin === 1 ? true : false)
+        })
   }
 
 
@@ -94,7 +102,7 @@ const Chat = () => {
         reset()
         renderMessage({message: data.message, profile : adminProfile},true)
         socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid,  receiver_id : chatInformation.id,dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'), user_id: getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id,isAdmin: 1, room: chatInformation.user_uuid }, true)
-        console.log({message: data.message, profile :adminProfile,to: chatInformation.user_uuid,  receiver_id : chatInformation.id,dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'), user_id: getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id,isAdmin: 1, room: chatInformation.user_uuid })
+       
       }
 
 
@@ -122,14 +130,12 @@ const Chat = () => {
                setRooms(data)
            })
 
+     
 
-          socket.on('get-chat-history', (data) => {
-               console.log('asd;lkas;ldsa;ldsa')
-          })
-
+   
 
              return () => {
-                   socket.off('get-chat-history')
+              
                    socket.off('send-message')
                    socket.off('send-message-to-admins')
                    socket.off('show-rooms')
@@ -138,9 +144,23 @@ const Chat = () => {
                }
               
 
-      },[chatInformation])
+      },[])
 
+      useEffect(() => {
+               socket.connect()
+       
+               socket.on('get-chat-history', (data) => {
+               handleHistoryChat(data)
+          })
 
+ 
+
+              return () => {
+                   socket.off('get-chat-history')
+                   socket.disconnect()
+  
+               }
+      },[])
 
 
 

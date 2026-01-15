@@ -17,8 +17,6 @@ const createIO = (server) => {
      const userId =  socket.handshake.query.userId
      socket.userId = userId
 
-     console.log(userId)
-     console.log(socket.userId + " Join the chat")
 
      socket.join(socket.userId)
 
@@ -107,6 +105,7 @@ const createIO = (server) => {
 
 
      socket.on('history-chat', async (data) => {
+      console.log(data)
 
       const { room } = data
 
