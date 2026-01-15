@@ -41,6 +41,7 @@ const ClientChat = () => {
   const chatBoxRef = useRef(null)
   const [clientState,setClientState] = useState(true)
   const clientInputRef = useRef(null)
+  const [noAccount,setNoAccount] = useState("")
   const [clientInputValue,setClientInputValue] = useState()
   const [clientAuthenticationState,setClientAuthenticationState] = useState({
     register : true,
@@ -58,13 +59,10 @@ const ClientChat = () => {
         const user_flexing_contain = document.createElement('div')
               user_flexing_contain.className =  (isOwn ? "user-chat-flexing-contain" :  "user-chat-flexing-client-contain")
 
-        
         const user_Image = document.createElement('img')
               user_Image.src = data.profile
               user_Image.className = "user-chat-profile profile-chat-modify"
               
-
-
         const user_Chat = document.createElement('div')
         const user_Node = document.createTextNode(data.message)
               user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
@@ -124,15 +122,17 @@ const ClientChat = () => {
                 axios.post(process.env.REACT_APP_URL + 'login', { parsed :setEncode(data)})
 
                 .then((response) => {
+                  
             
                     const { user } = setDecode(response.data)
+                    console.log(user)
               
                     if(user.isAdmin === 1) {
                         hideBackDrop()  
                         setAdminAccount(true)
                         return
                     }
- 
+                    
                     socket.emit('update-uuid', {uuid : user.user_uuid, id : user.id})
                     localStorage.setItem('socketUUID', user.user_uuid)
                     hideBackDrop()
@@ -143,7 +143,7 @@ const ClientChat = () => {
                   
                 })
                 .catch((err) => {
-           
+                    setNoAccount(err.response.data.message)
                    hideBackDrop()
                 })
                   return 
@@ -185,6 +185,7 @@ const ClientChat = () => {
                     hideBackDrop()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data.data)
                     setProfileImg(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY).image)
+                             window.location.reload()  
                 })
                 .catch((err) => {
                   setEmailExist(true)
@@ -218,7 +219,7 @@ const ClientChat = () => {
         const user =  getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
         const date = new Date()
          renderMessage({message: clientInputRef.current.value, profile : user.image},true)
-        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, image : null,client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss')},true)
+        socket.emit('message',{message: clientInputRef.current.value, profile : user.image, image : null,client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'),isAdmin : 0, room: user.user_uuid, profile: user.image},true)
         clientInputRef.current.value = ''
       }
 
@@ -359,6 +360,7 @@ const ClientChat = () => {
               }
                 <p className="form-errors">{matchPasswordState ? "*Password does not match" : errors.confirmPassword?.message}
                   {emailExist ? serverMessage : null}
+                  {noAccount ? noAccount : null}
                 </p>
                 <p className="page-link"><span className="page-link-label" data-discover="true" onClick={handleLoginRegisterState}>{clientState ? "Create account" : "Login account" }</span></p>
               <button className="form-btn" style={btnStyle} disabled={backDropState}>{backDropState ? <BackDropModal/> : clientState ? "Create account" : "Login account"}</button>
