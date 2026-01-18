@@ -21,6 +21,15 @@ const createIO = (server) => {
                })   
   }
 
+
+  const updateOnlineStatus = () => {
+    fs.readFile('onlineStatus.txt', 'utf8', (err,data) => {
+           if(err) {
+            console.log(err)
+           }
+            
+        })
+  }
   
 
 
@@ -29,6 +38,7 @@ const createIO = (server) => {
 
       
     const allRoom = []
+
     io.on('connection', (socket) => {
          
      const userId =  socket.handshake.query.userId
@@ -36,17 +46,21 @@ const createIO = (server) => {
      
      console.log('user join the chat', socket.userId)
      socket.join(socket.userId)
-
+      
+     allRoom.push(socket.userId)
      socket.on('online-status', (data) => {
-       allRoom.push(data)
-       socket.broadcast.emit('online-room', allRoom)
-
-  
+          //  allRoom.push(data)
+           socket.broadcast.emit('online-room', allRoom)
+          //  createOnlineStatus(allRoom)
      })
 
      socket.on('online-status-admin', (data) => {
-     socket.emit('online-room', allRoom)
-
+         fs.readFile('onlineStatus.txt', 'utf8', (err,data) => {
+           if(err) {
+            console.log(err)
+           }
+             socket.emit('online-room', data)
+        })
      })
 
 
@@ -157,9 +171,9 @@ const createIO = (server) => {
       
        let index = allRoom.indexOf(socket.userId)
        allRoom.splice(index,1)
+       
 
-       console.log(createOnlineStatus(allRoom))
-  
+       createOnlineStatus(allRoom)
        socket.broadcast.emit('online-room', allRoom)
        console.log(`User ${socket.userId} leave the chat`)
        socket.leave(socket.userId)

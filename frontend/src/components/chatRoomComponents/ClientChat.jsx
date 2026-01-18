@@ -230,7 +230,7 @@ const ClientChat = () => {
         const date = new Date()
          renderMessage({message: clientInputRef.current.value, profile : user.image},true)
         socket.emit('message',{message: clientInputRef.current.value, profile : user.image, image : null,client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'),isAdmin : 0, room: user.user_uuid, profile: user.image},true)
-            socket.emit('online-status', user.user_uuid)
+         socket.emit('online-status', user.user_uuid)
         clientInputRef.current.value = ''
       }
 
