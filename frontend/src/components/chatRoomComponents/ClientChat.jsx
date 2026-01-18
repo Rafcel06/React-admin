@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import profile from "../../images/user-logo.png";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useRef } from "react";
 import socket from "../SocketIO/SocktetIO";
 import useAlert from "../../customHooks/useAlert";
@@ -134,7 +134,6 @@ const ClientChat = () => {
                   
             
                     const { user } = setDecode(response.data)
-                    console.log(user)
               
                     if(user.isAdmin === 1) {
                         hideBackDrop()  
@@ -265,8 +264,6 @@ const ClientChat = () => {
             })
           
 
-
-  
                return () => {
                    socket.off('send-message')
                    socket.disconnect()
@@ -277,12 +274,11 @@ const ClientChat = () => {
 
 
 
-                  useEffect(() => {
+                useEffect(() => {
                socket.connect()
-                       socket.emit('history-chat',{room : localStorage.getItem('socketUUID')})
+               socket.emit('history-chat',{room : localStorage.getItem('socketUUID')})
                socket.on('get-chat-history', (data) => {
-      
-                data.forEach((each) => {
+                   data.forEach((each) => {
                   renderMessage(each,each.isAdmin === 0 ? true : false)
         })
           })

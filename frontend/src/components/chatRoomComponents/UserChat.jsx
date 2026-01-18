@@ -19,6 +19,7 @@ const Chat = () => {
   const [rooms, setRooms] = useState([])
   const { getSecureStorage, setSecureStorage, removeSecureStorage,clearSecureStorge } = useLocalStorage()
   const [selectedChat, setSelectedChat] = useState(false)
+  const [selectHistory,setSelectedHistory] = useState(false)
   const [chatInformation,setChatInformation] = useState({})
   const [userChat,setUserChat] = useState(false)
   const { handleSubmit, reset, register ,formState} = useForm();
@@ -30,16 +31,22 @@ const Chat = () => {
   
   const chatBoxRef = useRef(null)
 
-  const handleShowChat = (data) => {
-       resetChatField(data)
+  const handleShowChat = (data) => {  
+       localStorage.setItem('Room', data.user_uuid)
        setChatInformation(data)
+       resetChatField(data)
        setSelectedChat(true)
+       setSelectedHistory((prevState) => !prevState)
        socket.emit('history-chat',{ room : data.user_uuid})
         
   }
 
 
-  const handleHistoryChat  = (data) => {
+
+    const handleHistoryChat  = (data) => {
+
+
+        resetChatMatched(data)
 
         data.forEach((each) => {
            renderMessage(each,each.isAdmin === 1 ? true : false)
@@ -81,7 +88,21 @@ const Chat = () => {
      
 
       const resetChatField = (data) => {
-   
+
+         if(data.user_uuid === chatInformation.user_uuid) {
+                 return
+         }
+
+          const message_chat_admin = document.querySelectorAll('.admin-chat-flexing-contain')
+          const message_chat_client = document.querySelectorAll('.admin-chat-flexing-client-contain')
+
+          message_chat_admin.forEach((each) => chatBoxRef.current.removeChild(each))
+          message_chat_client.forEach((each) => chatBoxRef.current.removeChild(each))
+      }
+
+
+       const resetChatMatched = (data) => {
+
          if(data.user_uuid === chatInformation.user_uuid) {
                  return
          }
@@ -120,7 +141,10 @@ const Chat = () => {
 
 
            socket.on('send-message-to-admins', (data) => {
+                console.log(data)
+                 console.log("chat information ",chatInformation)
               if(chatInformation.user_uuid != data.client) {
+                console.log('not matcccchhhhh')
                       return
                 }
              renderMessage({message: data.message, profile : data.profile},false)
@@ -130,10 +154,7 @@ const Chat = () => {
                setRooms(data)
            })
 
-     
-
-   
-
+    
              return () => {
               
                    socket.off('send-message')
@@ -148,12 +169,9 @@ const Chat = () => {
 
       useEffect(() => {
                socket.connect()
-       
                socket.on('get-chat-history', (data) => {
-               handleHistoryChat(data)
+                handleHistoryChat(data)
           })
-
- 
 
               return () => {
                    socket.off('get-chat-history')

@@ -22,6 +22,7 @@ const createIO = (server) => {
 
      socket.on('message',  async (data) => {   
 
+
             if(!data.to) {
     
                const {message,dt_message,images,user_id,receiver_id, isAdmin,room, profile}  = data
@@ -105,7 +106,6 @@ const createIO = (server) => {
 
 
      socket.on('history-chat', async (data) => {
-      console.log(data)
 
       const { room } = data
 
@@ -113,7 +113,7 @@ const createIO = (server) => {
                let sql = 'SELECT * FROM client_message WHERE room = ?;'
                let result = await  db.executeQuery(sql,[room])
                socket.emit('get-chat-history', result)
-               console.log(result)
+    
      
        }
        catch(err) { 
