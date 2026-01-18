@@ -233,8 +233,21 @@
     position: relative;
     top: -21px;
     left: 35px;
+    border: 1px solid #6b6666;
  
 }
+
+.user-status-selected {
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+    border-radius: 50px;
+    position: absolute;
+    margin-top: 1.5em;
+    margin-right: 0.9em;
+    border: 1px solid #6b6666;
+}
+
 
 .user-chat-information {
    height: 60px;
@@ -466,6 +479,28 @@
 
 .user-chat-modify {
    font-size: 14px !important;
+}
+
+.user-status {
+        display: inline-block;
+        height: 12px;
+        width: 12px;
+        border-radius: 50px;
+        position: relative;
+        top: -18px;
+        left: 36px;
+        border: 1px solid #6b6666;
+    }
+
+.user-status-selected {
+    display: inline-block;
+    height: 12px;
+    width: 12px;
+    border-radius: 50px;
+    position: absolute;
+    margin-top: 1.5em;
+    margin-right: 0.9em;
+    border: 1px solid #6b6666;
 }
 
 }

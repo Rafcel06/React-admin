@@ -14,9 +14,11 @@ app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(express.static(path.join(__dirname,'public/file')))
 app.use(cors())
+
 const server = http.createServer(app);
 
 app.use('/api/v1', authenticate)
+
 
 
 const io = createIO(server)

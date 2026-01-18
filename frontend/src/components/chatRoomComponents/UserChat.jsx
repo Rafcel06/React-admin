@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import socket from "../SocketIO/SocktetIO";
 import moment from 'moment';
 import useLocalStorage from '../../customHooks/useLocalStorage';
+import { useColorScheme } from '@mui/material/styles';
 
 
 const Chat = () => {
@@ -27,11 +28,12 @@ const Chat = () => {
   const [notificationCount,setNotificationCount] = useState(0)
   const [showNotification,setShowNotification] = useState(false)
   const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
-  const [chatHistory,setChatHistory] = useState([])
+  const [onlineRoom,setOnlineRoom] = useState([])
   
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {  
+
        localStorage.setItem('Room', data.user_uuid)
        setChatInformation(data)
        resetChatField(data)
@@ -141,10 +143,7 @@ const Chat = () => {
 
 
            socket.on('send-message-to-admins', (data) => {
-                console.log(data)
-                 console.log("chat information ",chatInformation)
               if(chatInformation.user_uuid != data.client) {
-                console.log('not matcccchhhhh')
                       return
                 }
              renderMessage({message: data.message, profile : data.profile},false)
@@ -168,12 +167,20 @@ const Chat = () => {
       },[])
 
       useEffect(() => {
+           
                socket.connect()
+               socket.emit('online-status-admin', 'refresh')
                socket.on('get-chat-history', (data) => {
                 handleHistoryChat(data)
           })
 
+              socket.on('online-room', (data) => {
+                console.log(data)
+                setOnlineRoom(data)
+              })
+
               return () => {
+                   socket.off('online-room')
                    socket.off('get-chat-history')
                    socket.disconnect()
   
@@ -205,7 +212,10 @@ const Chat = () => {
                                  <div className='user-contain' onClick={() => handleShowChat(mapped)} key={index}>
                                       <div className='user-chat-profile'>
                                         <img src={mapped.image} alt="" className='chat-user-image'/>
-                                        <span className='user-status'></span>
+                                        {
+                                          onlineRoom.includes(mapped.user_uuid) ?  <span className='user-status' style={{background : '#47ff05'}}></span> : null
+                                        }
+                                        
                                       </div>
                                       <div className='user-chat-information'>
                                       <span className='user-chat-name'>{mapped.first_name}</span>
@@ -222,9 +232,16 @@ const Chat = () => {
                         <div className={ selectedChat ? "chat-block-contain" : "chat-block-contain  minimize-chat "}>
                            <div className='user-chat-block-information'>
                                <div className='user-selected-name'>
-                                  <img src={chatInformation.image} alt="" className='user-chat-profile profile-chat-modify'/>
+                                   <img src={chatInformation.image} alt="" className='user-chat-profile profile-chat-modify'/>
+                                       {
+                                          onlineRoom.includes(chatInformation.user_uuid) ?  <span className='user-status-selected' style={{background : '#47ff05'}}></span> : null
+                                        }
                                    <span className='user-chat-name user-chat-modify'>{chatInformation.first_name}</span>
                                </div> 
+
+               
+                                      
+                               
                                <div className='user-selected-option'>
                                    <SearchIcon className="input-icons"/>
                                </div>
@@ -248,7 +265,9 @@ const Chat = () => {
                                  <div className='user-contain  flexing-mobile' onClick={() => handleShowChat(mapped)} key={index}>
                                       <div className='user-chat-profile'>
                                         <img src={mapped.image} alt="" className='chat-user-image'/>
-                                        <span className='user-status'></span>
+                                         {
+                                          onlineRoom.includes(mapped.user_uuid) ?  <span className='user-status' style={{background : '#47ff05'}}></span> : null
+                                        }
                                       </div>
                                       <div className='user-chat-information'>
                                       <span className='user-chat-name'>{mapped.first_name}</span>

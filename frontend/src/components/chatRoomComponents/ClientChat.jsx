@@ -134,13 +134,15 @@ const ClientChat = () => {
                   
             
                     const { user } = setDecode(response.data)
+                   
               
                     if(user.isAdmin === 1) {
                         hideBackDrop()  
                         setAdminAccount(true)
                         return
                     }
-                    
+
+                    socket.emit('online-status', user.user_uuid)
                     socket.emit('update-uuid', {uuid : user.user_uuid, id : user.id})
                     localStorage.setItem('socketUUID', user.user_uuid)
                     hideBackDrop()
@@ -193,7 +195,7 @@ const ClientChat = () => {
                     hideBackDrop()
                     setSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY,response.data.data)
                     setProfileImg(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY).image)
-                             window.location.reload()  
+                    window.location.reload()  
                 })
                 .catch((err) => {
                   setEmailExist(true)
@@ -228,6 +230,7 @@ const ClientChat = () => {
         const date = new Date()
          renderMessage({message: clientInputRef.current.value, profile : user.image},true)
         socket.emit('message',{message: clientInputRef.current.value, profile : user.image, image : null,client: localStorage.getItem('socketUUID'), user_id: user.id, dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'),isAdmin : 0, room: user.user_uuid, profile: user.image},true)
+            socket.emit('online-status', user.user_uuid)
         clientInputRef.current.value = ''
       }
 
@@ -250,14 +253,18 @@ const ClientChat = () => {
       
             socket.connect()
             socket.emit('room','From client')
+            
+
             if(!getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)) {
                 showAlertElement()
             }
 
             if(getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)) {
+               
                 const user = getSecureStorage(process.env.REACT_APP_CLIENT_IDENTIFICATION_KEY)
+                socket.emit('online-status', user.user_uuid)
                 setProfileImg(user.image)
-                }
+            }
 
             socket.on('send-message', (data) => {
                  renderMessage({message: data.message, profile : data.profile},false)
