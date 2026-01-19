@@ -4,6 +4,7 @@ const { Server, Socket } = require("socket.io")
 const db = require('../db/database')
 const {  v4 } = require('uuid')  
 const fs = require('fs')
+const moment = require("moment")
 
 
 const createIO = (server) => {
@@ -22,21 +23,22 @@ const createIO = (server) => {
   }
 
 
-  const updateOnlineStatus = () => {
-    fs.readFile('onlineStatus.txt', 'utf8', (err,data) => {
-           if(err) {
-            console.log(err)
-           }
-            
-        })
+   const createAdminOnlineStatus = (content) =>{
+             fs.writeFile('onlineAdminStatus.txt', JSON.stringify(content), "utf8", (err) => {
+                  if(err) {
+                     console.log(err)
+                  }
+                  console.log('Succesfully created temporary history')
+               })   
   }
-  
 
 
 
 
 
-      
+
+
+
     const allRoom = []
 
     io.on('connection', (socket) => {
@@ -44,17 +46,18 @@ const createIO = (server) => {
      const userId =  socket.handshake.query.userId
      socket.userId = userId
      
-     console.log('user join the chat', socket.userId)
+
      socket.join(socket.userId)
-      
      allRoom.push(socket.userId)
+
+
+  // Client online status from admin view
+
      socket.on('online-status', (data) => {
-          //  allRoom.push(data)
            socket.broadcast.emit('online-room', allRoom)
-          //  createOnlineStatus(allRoom)
      })
 
-     socket.on('online-status-admin', (data) => {
+     socket.on('admin-refresh-client-online', (data) => {
          fs.readFile('onlineStatus.txt', 'utf8', (err,data) => {
            if(err) {
             console.log(err)
@@ -64,15 +67,26 @@ const createIO = (server) => {
      })
 
 
+     
+  // Admin online status from client view
 
-     socket.on('message',  async (data) => {   
+   
+
+     socket.on('message',  async (data) => { 
+         
+        let date = ""
+
+        console.log("from message event", data.message)
+        
+
             if(!data.to) {
     
                const {message,dt_message,images,user_id,receiver_id, isAdmin,room, profile}  = data
-     
+               date = moment(dt_message).format()
+        
                try {
                      let sql =  "INSERT INTO client_message(message,dt_message,images,user_id,receiver_id,isAdmin,room, profile) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
-                     let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,receiver_id, isAdmin, room, profile])
+                     let results =  await db.insertQuery(sql,[message,date,images,user_id,receiver_id, isAdmin, room, profile])
                      socket.broadcast.emit('send-message-to-admins', data)
                   }
               catch(err) {
@@ -83,11 +97,11 @@ const createIO = (server) => {
 
              const {message,dt_message,images,user_id,receiver_id, isAdmin,room, profile}  = data
              
-
+                   date = moment(dt_message).format()
                try {
 
                      let sql =  "INSERT INTO client_message(message,dt_message,images,user_id,receiver_id, isAdmin, room, profile) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"
-                     let results =  await db.insertQuery(sql,[message,dt_message,images,user_id,receiver_id, isAdmin,room, profile])
+                     let results =  await db.insertQuery(sql,[message,date,images,user_id,receiver_id, isAdmin,room, profile])
                      socket.to(data.to).emit('send-message', data)
                   }
               catch(err) {
@@ -107,7 +121,6 @@ const createIO = (server) => {
               if(result) {
                    let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
                    let results =  await db.executeQuery(sql)
-                   console.log(results)
                    socket.emit('show-rooms','data is being updated')
               }
           }
@@ -116,6 +129,23 @@ const createIO = (server) => {
               console.log(err)
           }
      })
+
+    //  socket.on('update-uuid-admin',async (data) => {
+
+    //       try {
+    //           let sql = 'UPDATE users SET user_uuid = ? WHERE id = ? '
+    //           let result = await db.executeQuery(sql,[data.uuid, data.id])
+
+    //           if(result) {
+    //                let sql =  "SELECT email,first_name,image,id,isAdmin, user_uuid FROM users WHERE isAdmin = 0"
+    //                let results =  await db.executeQuery(sql)
+    //           }
+    //       }
+
+    //       catch(err) {
+    //           console.log(err)
+    //       }
+    //  })
 
 
     socket.on('room',  async (data) => {
@@ -171,8 +201,6 @@ const createIO = (server) => {
       
        let index = allRoom.indexOf(socket.userId)
        allRoom.splice(index,1)
-       
-
        createOnlineStatus(allRoom)
        socket.broadcast.emit('online-room', allRoom)
        console.log(`User ${socket.userId} leave the chat`)

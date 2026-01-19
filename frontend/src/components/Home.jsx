@@ -24,6 +24,7 @@ import Chat from "./chatRoomComponents/UserChat";
 
 import secureLocalStorage from "react-secure-storage";
 import { useState } from "react";
+import socket from "./SocketIO/SocktetIO";
 
 function Home() {
 
@@ -67,6 +68,15 @@ function Home() {
 
   useEffect(() => {
      setUserAuth(getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user)
+      
+
+    //  socket.connect()
+    //  const user = getSecureStorage(process.env.REACT_APP_STORAGE_KEY)
+    //  socket.emit('update-uuid-admin', {uuid :localStorage.getItem("socketUUID"), id : user.user.id})
+     return () => {
+      // socket.disconnect()
+     }
+
   },[])
 
   return (

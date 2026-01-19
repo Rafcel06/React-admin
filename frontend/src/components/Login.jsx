@@ -27,6 +27,8 @@ const Login = () => {
   const [showPass,setShowPass] = useState(true);
   const {setEncode, setDecode} = useEncryptDecrypt()
   const {BackDropModal, hideBackDrop, showBackDrop, backDropState, btnStyle} = useBackDrop()
+  const [notAdmin,setNotAdmin] = useState(false)
+
   const navigate = useNavigate()
 
   const setShowPassword = () => {
@@ -51,7 +53,13 @@ const Login = () => {
     showBackDrop()
     axios.post(process.env.REACT_APP_URL + 'login',{ parsed :setEncode(data)})
         .then((response) => {
-             let decodeData =  setDecode(response?.data)
+                let decodeData =  setDecode(response?.data)
+
+              if(decodeData.user.isAdmin === 0) {
+                setNotAdmin(true)
+                hideBackDrop()
+                 return
+              }
               setSecureStorage(process.env.REACT_APP_STORAGE_KEY, decodeData)
               hideBackDrop()
               navigate('/home', { replace: true })
@@ -99,7 +107,9 @@ const Login = () => {
                 })} />
                   { showPass ?  <VisibilityOffIcon className="input-icons" onClick={setHidePassword}/>  : <RemoveRedEyeIcon className="input-icons" onClick={setShowPassword} />}
                 </div>
-                <p className="form-errors">{Invalid ? Invalid : errors.password?.message}</p>
+                <p className="form-errors">{Invalid ? Invalid : errors.password?.message}
+                  {notAdmin ? "This is not admin account" : null}
+                </p>
               <p className="page-link">
                 <Link className="page-link-label" to='/forgot-password'>Forgot Password?</Link>
               </p>

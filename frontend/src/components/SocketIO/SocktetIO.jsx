@@ -6,7 +6,7 @@ import { v4 } from "uuid";
 
    const createUUID = () => {
 
-       if(!localStorage.getItem('socketUUID')) {
+       if(!localStorage.getItem('socketUUID')) {        
            localStorage.setItem('socketUUID', v4())
        }  
        return  localStorage.getItem('socketUUID')

@@ -53,7 +53,7 @@ const ClientChat = () => {
   const [matchPasswordState,setMatchPasswordState] = useState(false)
   const [adminAccount, setAdminAccount] = useState(false)
   const [isLogged,setIsLogged] = useState(false)
-
+  const [adminStatus,setAdminStatus] = useState(false)
 
 
   //   const handleHistoryChat  = (data) => {
@@ -62,33 +62,46 @@ const ClientChat = () => {
   //          renderMessage(each,each.isAdmin === 0 ? true : false)
   //       })
   // }
+     const renderMessage = (data,isOwn) => {
 
-   const renderMessage = (data,isOwn) => {
 
-        const user_flexing_contain = document.createElement('div')
-              user_flexing_contain.className =  (isOwn ? "user-chat-flexing-contain" :  "user-chat-flexing-client-contain")
+       
+             const user_flexing_contain = document.createElement('div')
+                   user_flexing_contain.className =  (isOwn ? "admin-chat-flexing-contain" :  "admin-chat-flexing-client-contain")
+          
+                  
+                  const user_Image = document.createElement('img')
+                        user_Image.src = data.profile
+                        user_Image.className = "user-chat-profile profile-chat-modify"
+                        
+          
+          
+                  const user_Chat = document.createElement('div')
+                  const user_Node = document.createTextNode(data.message)
+                        user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
 
-        const user_Image = document.createElement('img')
-              user_Image.src = data.profile
-              user_Image.className = "user-chat-profile profile-chat-modify"
-              
-        const user_Chat = document.createElement('div')
-        const user_Node = document.createTextNode(data.message)
-              user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
+                  const user_chat_date = document.createElement('div')
+                        user_chat_date.className = "chat_date_format"
+                  const user_chat_node = document.createTextNode(moment(data.dt_message).format('LT'))
+                       
+                        
+                   
+                  user_chat_date.appendChild(user_chat_node)
+                  user_Chat.appendChild(user_Node)
+                  
+                  user_Chat.appendChild(user_chat_date)
+                  user_flexing_contain.appendChild(user_Chat)
+                  user_flexing_contain.appendChild(user_Image)
+                  chatBoxRef.current.appendChild(user_flexing_contain)
+                  
+                  chatBoxRef.current.scrollTo({
+                  left: 0,
+                  top: chatBoxRef.current.scrollHeight,
+                  behavior: "smooth"
+                });
+          
 
-        user_Chat.appendChild(user_Node)
-           user_flexing_contain.appendChild(user_Image)
-        user_flexing_contain.appendChild(user_Chat)
-        chatBoxRef.current.appendChild(user_flexing_contain)
-        
-        chatBoxRef.current.scrollTo({
-        left: 0,
-        top: chatBoxRef.current.scrollHeight,
-        behavior: "smooth"
-      });
-
-    
-    }
+      }
 
 
       const canvaImage = (base64Image,profileName) => {
@@ -281,8 +294,11 @@ const ClientChat = () => {
 
 
 
-                useEffect(() => {
+            useEffect(() => {
                socket.connect()
+               socket.on('', (data) => {
+                    setAdminStatus(data.admin_status)
+               })
                socket.emit('history-chat',{room : localStorage.getItem('socketUUID')})
                socket.on('get-chat-history', (data) => {
                    data.forEach((each) => {
@@ -306,12 +322,18 @@ const ClientChat = () => {
      <div className="client-chat-contain">
       <div className="chat-block-contain client-block-chat">
         <div className="user-chat-block-information">
-          <div className="user-selected-name">
-             <img src={profile} alt="" className='user-chat-profile profile-chat-modify'/>
-            <span className="user-chat-name user-chat-modify">
-              Costumer Service
-            </span>
-          </div>
+
+  
+          
+          <div className="user-contain flexing-mobile" id="adjust-client-admin"><div className="user-chat-profile">
+             <img alt="" className="chat-user-image" src={profile}/>
+              { adminStatus ? <span className="user-status" style={{background: "rgb(71, 255, 5)"}}></span> : null} 
+             </div>
+               <div className="user-chat-information">
+                 <span className="user-chat-name">Costumer Service</span>
+                </div>
+            </div>
+
           <div className="user-selected-option">
             <SearchIcon className="input-icons"/>
           </div>

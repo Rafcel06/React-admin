@@ -12,6 +12,7 @@ import socket from "../SocketIO/SocktetIO";
 import moment from 'moment';
 import useLocalStorage from '../../customHooks/useLocalStorage';
 import { useColorScheme } from '@mui/material/styles';
+import secureLocalStorage from 'react-secure-storage';
 
 
 const Chat = () => {
@@ -29,7 +30,7 @@ const Chat = () => {
   const [showNotification,setShowNotification] = useState(false)
   const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
   const [onlineRoom,setOnlineRoom] = useState([])
-  
+  const currentChatRecordRef = useRef(null)
   const chatBoxRef = useRef(null)
 
   const handleShowChat = (data) => {  
@@ -38,6 +39,8 @@ const Chat = () => {
        setChatInformation(data)
        resetChatField(data)
        setSelectedChat(true)
+       currentChatRecordRef.current = data
+
        setSelectedHistory((prevState) => !prevState)
        socket.emit('history-chat',{ room : data.user_uuid})
         
@@ -48,7 +51,11 @@ const Chat = () => {
     const handleHistoryChat  = (data) => {
 
 
-        resetChatMatched(data)
+       if(chatBoxRef.current.hasChildNodes()) {
+             if(data[0].room === currentChatRecordRef.current.user_uuid) {
+                  return
+             }
+       }
 
         data.forEach((each) => {
            renderMessage(each,each.isAdmin === 1 ? true : false)
@@ -58,7 +65,6 @@ const Chat = () => {
 
         const renderMessage = (data,isOwn) => {
 
-       
              const user_flexing_contain = document.createElement('div')
                    user_flexing_contain.className =  (isOwn ? "admin-chat-flexing-contain" :  "admin-chat-flexing-client-contain")
           
@@ -67,16 +73,22 @@ const Chat = () => {
                         user_Image.src = data.profile
                         user_Image.className = "user-chat-profile profile-chat-modify"
                         
-          
-          
                   const user_Chat = document.createElement('div')
                   const user_Node = document.createTextNode(data.message)
                         user_Chat.className = (isOwn ? "user-reply " : 'client-reply')
-          
+
+                  const user_chat_date = document.createElement('div')
+                        user_chat_date.className = "chat_date_format"
+                  const user_chat_node = document.createTextNode(moment(data.dt_message).format('LT'))
+                       
+                        
+                   
+                  user_chat_date.appendChild(user_chat_node)
                   user_Chat.appendChild(user_Node)
-          
+                  
+                  user_Chat.appendChild(user_chat_date)
                   user_flexing_contain.appendChild(user_Chat)
-                       user_flexing_contain.appendChild(user_Image)
+                  user_flexing_contain.appendChild(user_Image)
                   chatBoxRef.current.appendChild(user_flexing_contain)
                   
                   chatBoxRef.current.scrollTo({
@@ -104,10 +116,11 @@ const Chat = () => {
 
 
        const resetChatMatched = (data) => {
+          
 
-         if(data.user_uuid === chatInformation.user_uuid) {
-                 return
-         }
+        //  if(data[0].room === currentChatRecordRef.current.user_uuid) {
+        //          return
+        //  }
 
           const message_chat_admin = document.querySelectorAll('.admin-chat-flexing-contain')
           const message_chat_client = document.querySelectorAll('.admin-chat-flexing-client-contain')
@@ -124,7 +137,7 @@ const Chat = () => {
         let date = new Date()
         reset()
         renderMessage({message: data.message, profile : adminProfile},true)
-        socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid,  receiver_id : chatInformation.id,dt_message :moment(date, 'YYYY-MM-DD HH:mm:ss'), user_id: getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id,isAdmin: 1, room: chatInformation.user_uuid }, true)
+        socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid,  receiver_id : chatInformation.id,dt_message :date, user_id: getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id,isAdmin: 1, room: chatInformation.user_uuid }, true)
        
       }
 
@@ -142,12 +155,16 @@ const Chat = () => {
            })
 
 
-           socket.on('send-message-to-admins', (data) => {
-              if(chatInformation.user_uuid != data.client) {
-                      return
-                }
-             renderMessage({message: data.message, profile : data.profile},false)
-           })
+          //  socket.on('send-message-to-admins', (data) => {
+            
+          //   console.log(chatInformation)
+          //   console.log(data)
+
+          //     if(chatInformation.user_uuid != data.client) {
+          //             return
+          //       }
+          //    renderMessage({message: data.message, profile : data.profile},false)
+          //  })
 
            socket.on('show-rooms', (data) => {
                setRooms(data)
@@ -157,7 +174,7 @@ const Chat = () => {
              return () => {
               
                    socket.off('send-message')
-                   socket.off('send-message-to-admins')
+                  //  socket.off('send-message-to-admins')
                    socket.off('show-rooms')
                    socket.disconnect()
   
@@ -166,16 +183,36 @@ const Chat = () => {
 
       },[])
 
+
+      useEffect(() => {
+
+            socket.connect()
+            socket.on('send-message-to-admins', (data) => {
+              if(currentChatRecordRef.current.user_uuid != data.client) {
+                      return
+                }
+             renderMessage({message: data.message, profile : data.profile},false)
+           })
+
+
+           return () => {
+                     socket.off('send-message-to-admins')
+                     socket.disconnect()
+           } 
+     
+      },[])
+
+
+
       useEffect(() => {
            
                socket.connect()
-               socket.emit('online-status-admin', 'refresh')
+               socket.emit('admin-refresh-client-online', true)
                socket.on('get-chat-history', (data) => {
                 handleHistoryChat(data)
           })
 
               socket.on('online-room', (data) => {
-                console.log(data)
                 setOnlineRoom(data)
               })
 
@@ -186,6 +223,10 @@ const Chat = () => {
   
                }
       },[])
+
+      // useEffect(() => {
+      //      console.log(chatInformation)
+      // },[chatInformation])
 
 
 
