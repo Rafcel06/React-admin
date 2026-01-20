@@ -57,11 +57,33 @@ const Chat = () => {
              }
        }
 
-        data.forEach((each) => {
-           renderMessage(each,each.isAdmin === 1 ? true : false)
-        })
-  }
+        // data.map((mapped) => {
+        //   renderMessage(mapped,(mapped.isAdmin === 1 ? true : false))
+        // })
 
+        
+
+
+  }
+  
+
+        const renderGroupMessage = (data) => {
+
+          const date = new Date()
+
+          const user_flexing_group = document.createElement('div')
+                user_flexing_group.className = "flexing-date-group"
+
+          const user_group_date_massage = document.createElement('div')
+                user_group_date_massage.className = "flexing-date-message"
+
+          const user_group_date_text = document.createTextNode(moment(data).format('ll'))
+
+                
+                user_group_date_massage.appendChild(user_group_date_text)
+                user_flexing_group.appendChild(user_group_date_massage)
+                chatBoxRef.current.appendChild(user_flexing_group)
+        }
 
         const renderMessage = (data,isOwn) => {
 
@@ -109,7 +131,11 @@ const Chat = () => {
 
           const message_chat_admin = document.querySelectorAll('.admin-chat-flexing-contain')
           const message_chat_client = document.querySelectorAll('.admin-chat-flexing-client-contain')
+          const message_chat_block_contain = document.querySelectorAll('.flexing-date-group')
 
+  
+   
+          message_chat_block_contain.forEach((each) => chatBoxRef.current.removeChild(each))
           message_chat_admin.forEach((each) => chatBoxRef.current.removeChild(each))
           message_chat_client.forEach((each) => chatBoxRef.current.removeChild(each))
       }

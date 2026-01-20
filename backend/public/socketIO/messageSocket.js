@@ -181,7 +181,7 @@ const createIO = (server) => {
       const { room } = data
 
        try {
-               let sql = 'SELECT * FROM client_message WHERE room = ?;'
+               let sql = 'SELECT * FROM client_message WHERE room = ? ORDER BY dt_message ASC;'
                let result = await  db.executeQuery(sql,[room])
                socket.emit('get-chat-history', result)
     

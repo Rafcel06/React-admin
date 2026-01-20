@@ -159,7 +159,7 @@
 
 
 .admin-chat-flexing-contain {
-        height: auto;
+    height: auto;
     display: flex;
     justify-content: flex-end;
     flex-direction: row-reverse;
@@ -175,6 +175,24 @@
     align-items: flex-end;
     justify-content: end;
     gap: 1em;
+}
+
+.flexing-date-group {
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+}
+
+.flexing-date-message {
+    height: auto;
+    width: auto !important;
+    max-width: 50% !important;
+    padding: 0.8em 1em;
+    background: #3d5d8e;
+     border-radius: 30px;
+    font-size: 18px;
 }
 
 .user-chat-flexing-contain  {
