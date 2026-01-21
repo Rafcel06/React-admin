@@ -82,8 +82,6 @@ const createIO = (server) => {
          
         let date = ""
 
-        console.log("from message event", data.message)
-        
 
             if(!data.to) {
     

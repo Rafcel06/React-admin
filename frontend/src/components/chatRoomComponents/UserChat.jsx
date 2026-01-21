@@ -31,9 +31,11 @@ const Chat = () => {
   const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
   const [onlineRoom,setOnlineRoom] = useState([])
   const [historyChatList,setHistoryChatList] = useState([])
+  const chatAllRecordRef = useRef(null)
   const [dateUpdated,setDateUpdated] = useState(false)
   const currentChatRecordRef = useRef(null)
   const chatBoxRef = useRef(null)
+  const dateUpdateRef = useRef(false)
 
   const handleShowChat = (data) => {  
 
@@ -195,9 +197,11 @@ const Chat = () => {
         useEffect(() => {            
             socket.connect()
             socket.emit('room','From user')
-            socket.on('send-message', (data) => {
-            renderMessage({message: data.message, profile : data.profile},false)
-           })
+          //   socket.on('send-message', (data) => {
+      
+              
+          //   renderMessage({message: data.message, profile : data.profile},false)
+          //  })
 
 
           //  socket.on('send-message-to-admins', (data) => {
@@ -218,7 +222,7 @@ const Chat = () => {
     
              return () => {
               
-                   socket.off('send-message')
+                  //  socket.off('send-message')
                   //  socket.off('send-message-to-admins')
                    socket.off('show-rooms')
                    socket.disconnect()
@@ -236,6 +240,14 @@ const Chat = () => {
               if(currentChatRecordRef.current.user_uuid != data.client) {
                       return
                 }
+                            const dateSeperateRecieved = new Date()
+                
+                           if(!dateUpdateRef.current && moment(chatAllRecordRef.current[chatAllRecordRef.current.length - 1]?.dt_message).format('YYYY-MM-DD') !== moment(dateSeperateRecieved).format('YYYY-MM-DD')) {
+                                  setDateUpdated(true)
+                                  dateUpdateRef.current =  true
+                                  renderGroupMessage(dateSeperateRecieved)
+                           }
+
              renderMessage({message: data.message, profile : data.profile},false)
            })
 
@@ -256,6 +268,7 @@ const Chat = () => {
                socket.connect()
                socket.emit('admin-refresh-client-online', true)
                socket.on('get-chat-history', (data) => {
+                chatAllRecordRef.current = data
                 handleHistoryChat(data)
                 setHistoryChatList(data)
                })

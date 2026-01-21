@@ -43,6 +43,7 @@ const ClientChat = () => {
   const clientInputRef = useRef(null)
   const [noAccount,setNoAccount] = useState("")
   const [clientInputValue,setClientInputValue] = useState()
+  
   const [clientAuthenticationState,setClientAuthenticationState] = useState({
     register : true,
     login : false
@@ -56,7 +57,8 @@ const ClientChat = () => {
   const [adminStatus,setAdminStatus] = useState(false)
     const [historyChatList,setHistoryChatList] = useState([])
     const [dateUpdated,setDateUpdated] = useState(false)
-
+    const chatAllRecordRef = useRef(null)
+    const dateUpdateRef = useRef(false)
 
   //   const handleHistoryChat  = (data) => {
   //   console.log(data)
@@ -86,7 +88,7 @@ const ClientChat = () => {
 
      const renderMessage = (data,isOwn) => {
 
-     const dateSeperate = new Date()
+        const dateSeperate = new Date()
   
              if(!dateUpdated && moment(historyChatList[historyChatList.length - 1]?.dt_message).format('YYYY-MM-DD') !== moment(dateSeperate).format('YYYY-MM-DD')) {
                     setDateUpdated(true)
@@ -306,7 +308,20 @@ const ClientChat = () => {
                 setProfileImg(user.image)
             }
 
+
+    
+
             socket.on('send-message', (data) => {
+           
+
+             const dateSeperateRecieved = new Date()
+  
+             if(!dateUpdateRef.current && moment(chatAllRecordRef.current[chatAllRecordRef.current.length - 1]?.dt_message).format('YYYY-MM-DD') !== moment(dateSeperateRecieved).format('YYYY-MM-DD')) {
+                    // setDateUpdated(true)
+                    dateUpdateRef.current  = true
+                    renderGroupMessage(dateSeperateRecieved)
+             }
+
                  renderMessage({message: data.message, profile : data.profile},false)
             })
           
@@ -334,6 +349,9 @@ const ClientChat = () => {
         //            data.forEach((each) => {
         //            renderMessage(each,each.isAdmin === 0 ? true : false)
         // })
+        chatAllRecordRef.current = data
+ 
+        setHistoryChatList(data)
 
         for (let i = 0; i < data.length; i++) {
         
