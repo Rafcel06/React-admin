@@ -70,11 +70,12 @@ function Home() {
      setUserAuth(getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user)
       
 
-    //  socket.connect()
+     socket.connect()
     //  const user = getSecureStorage(process.env.REACT_APP_STORAGE_KEY)
     //  socket.emit('update-uuid-admin', {uuid :localStorage.getItem("socketUUID"), id : user.user.id})
+     socket.emit("admin-status", true)
      return () => {
-      // socket.disconnect()
+      socket.disconnect()
      }
 
   },[])

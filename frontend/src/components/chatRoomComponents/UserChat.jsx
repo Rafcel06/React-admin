@@ -30,6 +30,8 @@ const Chat = () => {
   const [showNotification,setShowNotification] = useState(false)
   const [adminProfile,setAdminProfile] = useState('http://localhost:4000/1768388614400%20--%20Super.png')
   const [onlineRoom,setOnlineRoom] = useState([])
+  const [historyChatList,setHistoryChatList] = useState([])
+  const [dateUpdated,setDateUpdated] = useState(false)
   const currentChatRecordRef = useRef(null)
   const chatBoxRef = useRef(null)
 
@@ -50,18 +52,28 @@ const Chat = () => {
 
     const handleHistoryChat  = (data) => {
 
-
        if(chatBoxRef.current.hasChildNodes()) {
              if(data[0].room === currentChatRecordRef.current.user_uuid) {
                   return
              }
        }
 
-        // data.map((mapped) => {
-        //   renderMessage(mapped,(mapped.isAdmin === 1 ? true : false))
-        // })
+         for (let i = 0; i < data.length; i++) {
 
-        
+           const currentDate = moment(data[i].dt_message).format('YYYY-MM-DD');
+           const previousDate = i > 0 ? moment(data[i - 1].dt_message).format('YYYY-MM-DD')  : null;
+
+          if (i === 0 || currentDate !== previousDate) {
+             renderGroupMessage(data[i].dt_message);
+          }
+
+          renderMessage(data[i], data[i].isAdmin === 1);
+
+         }
+
+
+
+
 
 
   }
@@ -69,8 +81,7 @@ const Chat = () => {
 
         const renderGroupMessage = (data) => {
 
-          const date = new Date()
-
+            
           const user_flexing_group = document.createElement('div')
                 user_flexing_group.className = "flexing-date-group"
 
@@ -86,6 +97,13 @@ const Chat = () => {
         }
 
         const renderMessage = (data,isOwn) => {
+
+           const dateSeperate = new Date()
+
+           if(!dateUpdated && moment(historyChatList[historyChatList.length - 1]?.dt_message).format('YYYY-MM-DD') !== moment(dateSeperate).format('YYYY-MM-DD')) {
+                  setDateUpdated(true)
+                  renderGroupMessage(dateSeperate)
+           }
 
              const user_flexing_contain = document.createElement('div')
                    user_flexing_contain.className =  (isOwn ? "admin-chat-flexing-contain" :  "admin-chat-flexing-client-contain")
@@ -159,8 +177,9 @@ const Chat = () => {
 
 
       const  submit = (data) => {
+
+      const date = new Date()
       
-        let date = new Date()
         reset()
         renderMessage({message: data.message, profile : adminProfile},true)
         socket.emit('message',{message: data.message, profile :adminProfile,to: chatInformation.user_uuid,  receiver_id : chatInformation.id,dt_message :date, user_id: getSecureStorage(process.env.REACT_APP_STORAGE_KEY).user.id,isAdmin: 1, room: chatInformation.user_uuid }, true)
@@ -228,7 +247,9 @@ const Chat = () => {
      
       },[])
 
-
+     const handlQuitTab = () => {
+       socket.emit('admin-status', false)
+     }
 
       useEffect(() => {
            
@@ -236,13 +257,17 @@ const Chat = () => {
                socket.emit('admin-refresh-client-online', true)
                socket.on('get-chat-history', (data) => {
                 handleHistoryChat(data)
-          })
+                setHistoryChatList(data)
+               })
+   
+               socket.on('online-room', (data) => {
+                 setOnlineRoom(data)
+               })
 
-              socket.on('online-room', (data) => {
-                setOnlineRoom(data)
-              })
+            window.addEventListener('beforeunload', handlQuitTab)
 
               return () => {
+                   window.removeEventListener('beforeunload',handlQuitTab)
                    socket.off('online-room')
                    socket.off('get-chat-history')
                    socket.disconnect()

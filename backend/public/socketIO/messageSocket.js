@@ -70,6 +70,12 @@ const createIO = (server) => {
      
   // Admin online status from client view
 
+
+
+   socket.on("admin-status", (data) => {
+     socket.broadcast.emit("admin-update-status", data)
+   })
+
    
 
      socket.on('message',  async (data) => { 

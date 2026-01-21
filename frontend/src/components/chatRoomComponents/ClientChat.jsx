@@ -54,6 +54,8 @@ const ClientChat = () => {
   const [adminAccount, setAdminAccount] = useState(false)
   const [isLogged,setIsLogged] = useState(false)
   const [adminStatus,setAdminStatus] = useState(false)
+    const [historyChatList,setHistoryChatList] = useState([])
+    const [dateUpdated,setDateUpdated] = useState(false)
 
 
   //   const handleHistoryChat  = (data) => {
@@ -62,9 +64,34 @@ const ClientChat = () => {
   //          renderMessage(each,each.isAdmin === 0 ? true : false)
   //       })
   // }
+
+         const renderGroupMessage = (data) => {
+  
+              
+            const user_flexing_group = document.createElement('div')
+                  user_flexing_group.className = "flexing-date-group"
+  
+            const user_group_date_massage = document.createElement('div')
+                  user_group_date_massage.className = "flexing-date-message"
+  
+            const user_group_date_text = document.createTextNode(moment(data).format('ll'))
+  
+                  
+                  user_group_date_massage.appendChild(user_group_date_text)
+                  user_flexing_group.appendChild(user_group_date_massage)
+                  chatBoxRef.current.appendChild(user_flexing_group)
+          }
+  
+
+
      const renderMessage = (data,isOwn) => {
 
-
+     const dateSeperate = new Date()
+  
+             if(!dateUpdated && moment(historyChatList[historyChatList.length - 1]?.dt_message).format('YYYY-MM-DD') !== moment(dateSeperate).format('YYYY-MM-DD')) {
+                    setDateUpdated(true)
+                    renderGroupMessage(dateSeperate)
+             }
        
              const user_flexing_contain = document.createElement('div')
                    user_flexing_contain.className =  (isOwn ? "admin-chat-flexing-contain" :  "admin-chat-flexing-client-contain")
@@ -296,19 +323,37 @@ const ClientChat = () => {
 
             useEffect(() => {
                socket.connect()
+               socket.on('admin-update-status', (data) => {
+                  setAdminStatus(data)
+               })
                socket.on('', (data) => {
                     setAdminStatus(data.admin_status)
                })
                socket.emit('history-chat',{room : localStorage.getItem('socketUUID')})
                socket.on('get-chat-history', (data) => {
-                   data.forEach((each) => {
-                  renderMessage(each,each.isAdmin === 0 ? true : false)
-        })
+        //            data.forEach((each) => {
+        //            renderMessage(each,each.isAdmin === 0 ? true : false)
+        // })
+
+        for (let i = 0; i < data.length; i++) {
+        
+                   const currentDate = moment(data[i].dt_message).format('YYYY-MM-DD');
+                   const previousDate = i > 0 ? moment(data[i - 1].dt_message).format('YYYY-MM-DD')  : null;
+        
+                  if (i === 0 || currentDate !== previousDate) {
+                     renderGroupMessage(data[i].dt_message);
+                  }
+        
+                  renderMessage(data[i], data[i].isAdmin === 0 ? true : false);
+        
+                 }
+        
           })
 
  
 
               return () => {
+                socket.off('admin-update-status')
                    socket.off('get-chat-history')
                    socket.disconnect()
   
